@@ -1,4 +1,4 @@
-# PVSandBlockchains
+# PVS and Blockchains
 Modelling blockchains in PVS---from the absurdly abstract to the more-or-less real
 
 (Notes below from a talk I gave at Data61 in Setpember 2018)
