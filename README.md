@@ -4,6 +4,7 @@ Modelling blockchains in PVS---from the absurdly abstract to the more-or-less re
 (Notes below from a talk I gave at Data61 in Setpember 2018)
 
 Introduction
+
 􏰀 What general properties should blockchains have?
 􏰀 Initially independently from any particular “version”
 􏰀 Express properties first
@@ -17,6 +18,7 @@ decreasing, levels of abstraction
 preservation of properties
 
 Using PVS
+
 􏰀 Long pedigree
 􏰀 Personal experience
 􏰀 Functional programming with dependent types, and a proof theory—and all the support that goes with those
@@ -27,6 +29,7 @@ Using PVS
 􏰀 particularly property-driven development
 
 A plan
+
 A model of a trivial blockchain in PVS
 􏰀 Some proofs of simple properties—which guide the model in a
 modelling/validation cycle 􏰀 A plan for what’s next
@@ -35,6 +38,7 @@ modelling/validation cycle 􏰀 A plan for what’s next
 􏰀 (Keep an eye on Data61 work in Isabelle/HOL...)
 
 Conclusions
+
 Things we find valuable:
 􏰀 Simplicity
 􏰀 Generality
