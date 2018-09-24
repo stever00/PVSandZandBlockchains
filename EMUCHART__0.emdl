@@ -1,0 +1,60 @@
+{
+ "descriptor": {
+  "file_type": "emdl",
+  "version": "2.0",
+  "description": "emucharts model",
+  "chart_name": "EMUCHART__0"
+ },
+ "chart": {
+  "states": [
+   {
+    "id": "X1",
+    "name": "Ready",
+    "color": "#1f77b4",
+    "width": 36,
+    "height": 36,
+    "x": 167,
+    "y": 154,
+    "enter": "",
+    "exit": "",
+    "pmr": [],
+    "widgets": [],
+    "components": []
+   }
+  ],
+  "transitions": [],
+  "initial_transitions": [
+   {
+    "id": "IT1",
+    "name": "",
+    "target": {
+     "id": "X1",
+     "name": "Ready",
+     "color": "#1f77b4",
+     "width": 36,
+     "height": 36,
+     "x": 167,
+     "y": 154,
+     "enter": "",
+     "exit": "",
+     "pmr": [],
+     "widgets": [],
+     "components": []
+    }
+   }
+  ],
+  "variables": [
+   {
+    "id": "VAR_BCState:[# currentBC : BCType, newcontract : Gas, deployer : AccountNo, deployerGas : Gas, accounts : [AccountNo -> Cash], miner : AccountNo, minerGas : Gas, currentGasPrice : Gas, Display : Message(Local)",
+    "name": "BCState",
+    "type": "[# currentBC : BCType, newcontract : Gas, deployer : AccountNo, deployerGas : Gas, accounts : [AccountNo -> Cash], miner : AccountNo, minerGas : Gas, currentGasPrice : Gas, Display : Message",
+    "value": "(# currentBC := empty, newcontract := 0, dep := 0, accounts := LAMBDA (x : Deps) : 0, miner := 0,currentGasPrice := 0 #)",
+    "scope": "Local"
+   }
+  ],
+  "constants": [],
+  "datatypes": [],
+  "pmr": {},
+  "isPIM": false
+ }
+}

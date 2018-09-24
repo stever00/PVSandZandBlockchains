@@ -1,0 +1,50 @@
+; While compiling #'(:internal _singfs_0 0) at top level:
+Warning: Variable x is never used.
+; While compiling #'(:internal singfs!_0 0) at top level:
+Warning: Variable x is never used.
+; While compiling #'(:internal (:internal singfs_0 0) 0) at top level:
+Warning: Variable x is never used.
+; While compiling #'(:internal _BCstate_init_0 0) at top level:
+Warning: Variable x is never used.
+; While compiling #'(:internal BCstate_init!_0 0) at top level:
+Warning: Variable x is never used.
+; While compiling #'(:internal BCstate_init_0 0) at top level:
+Warning: Variable x is never used.
+; While compiling #'_add_account at top level:
+Warning: Variable E367 is never used.
+; While compiling #'_add_account at top level:
+Warning: Variable E364 is never used.
+; While compiling #'add_account! at top level:
+Warning: Variable E374 is never used.
+; While compiling #'add_account! at top level:
+Warning: Variable E371 is never used.
+; While compiling #'(:internal add_account 0) at top level:
+Warning: Variable E381 is never used.
+; While compiling #'(:internal add_account 0) at top level:
+Warning: Variable E378 is never used.
+; While compiling #'_c_add_account at top level:
+Warning: Variable E383 is never used.
+; While compiling #'c_add_account! at top level:
+Warning: Variable E386 is never used.
+; While compiling #'(:internal c_add_account 0) at top level:
+Warning: Variable E389 is never used.
+; While compiling #'_c_add_transaction at top level:
+Warning: Variable E394 is never used.
+; While compiling #'(:internal c_add_transaction 0) at top level:
+Warning: Variable E405 is never used.
+; While compiling #'_transition at top level:
+Warning: Variable E413 is never used.
+; While compiling #'(:internal transition 0) at top level:
+Warning: Variable E430 is never used.
+; While compiling #'_c_transition at top level:
+Warning: Variable E434 is never used.
+; While compiling #'c_transition! at top level:
+Warning: Variable E437 is never used.
+; While compiling #'(:internal c_transition 0) at top level:
+Warning: Variable E440 is never used.
+; While compiling #'_c_change at top level:
+Warning: Variable E443 is never used.
+; While compiling #'c_change! at top level:
+Warning: Variable E446 is never used.
+; While compiling #'(:internal c_change 0) at top level:
+Warning: Variable E449 is never used.
