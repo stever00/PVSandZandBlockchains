@@ -1,0 +1,46 @@
+types_and_constants : THEORY
+
+  BEGIN
+
+% For a UTXO model, an account's balance is not explicitly stored anywhere
+% (officially; it might be kept track of in the "wallet" that someone keeps,
+% but that is not part of the blockchain)
+
+% Cash moved about varies in size, so we use natural numbers
+  Cash : TYPE = nat
+
+% All possible account numbers--a few here for illustrative purposes
+% The mechanisms of account use (spending, mainly) are abstracted (hidden)
+% in this version
+  AccountNo : TYPE = {a0, a1, a2, a3, a4, a5, a6, a7, a8, a9}
+
+% Of the possible accounts, these are the currently used ones
+  LiveAccounts : TYPE = set[AccountNo]
+
+% Transactions have a name--here are a few
+  TransactionName : TYPE = {t0, t1, t2, t3, t4, t5, t6, t7, t8, t9}
+
+% We need to be able to find one particular output amongst the outputs
+% of a transaction, so we have an index
+  Index : TYPE = nat
+
+% Any inputs to a transaction indicate where value is being taken from: some previous
+% transaction, and which of its outputs
+  TransInput : TYPE = [# transaction : TransactionName, output : Index #]
+
+% Any outputs from a transaction say how much cash they contain and who owns it
+  TransOutput : TYPE =  [# cash : Cash, owner : AccountNo #]
+                       
+% Representing a transaction just as how much is being transferred from where (which outputs)
+% and to where (which inputs). The inputs can be a set, but the outputs need to be a list
+% (or anything indexable) since a future transaction needs to be able to refer to them
+  Transaction : TYPE = [# name : TransactionName,
+                          inputs : set[TransInput],
+                          outputs : list[TransOutput]
+		       #]
+
+% This is the state of the blockchain abstracted to just show all the
+% accepted, recorded transactions  
+  BCstatetype : TYPE = list[Transaction]
+
+END types_and_constants

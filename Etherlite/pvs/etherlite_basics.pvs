@@ -1,0 +1,14 @@
+% Starting to use the language definiton to implement some of the rules
+% from the "Making Smart Contracts Smarter" paper
+
+etherlite_basics : THEORY
+
+ BEGIN
+
+% PROPOSE
+
+% ACCEPT
+
+
+
+ END etherlite_basics

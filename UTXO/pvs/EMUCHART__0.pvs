@@ -1,0 +1,33 @@
+% Still needs lots of work to make more realistic :)
+% Ways of using the functions in BCtheory for example
+% Can try in PVSio, but would be good for demos in pvsio-web too.
+
+EMUCHART__0: THEORY
+ BEGIN IMPORTING pvsioweb_utils, types_and_constants, BCtheory
+  %-- operating modes
+  Mode: TYPE = { Ready }  
+  %-- state attributes
+  
+  % configtype shadows Configtype in order that the function accounts 
+  % and the finite sequence liveaccounts (both in BCstate, itself shadowed by bcstate) can be
+  % rendered in the simulator
+  State: TYPE = [#
+    mode: Mode,
+    previous_mode: Mode,
+    config: configtype,
+    Display : Message
+  #]
+  
+    %-- init function
+  init(x : real): State = (#
+    previous_mode := Ready, 
+    mode := Ready,
+    config := Config_init,
+    Display := "Go!"
+  #)
+
+  %-- leave/enter functions
+  enter(m: Mode)(st: State): State = st WITH [ mode := m ]
+  leave(m: Mode)(st: State): State = st WITH [ previous_mode := m ]
+  
+ END EMUCHART__0

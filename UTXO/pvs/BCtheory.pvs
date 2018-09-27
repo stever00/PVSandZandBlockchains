@@ -1,0 +1,36 @@
+BCtheory: THEORY
+ BEGIN IMPORTING pvsioweb_utils, types_and_constants, Maybe
+ 
+% Adding a new account
+% Some analysis here would be to prove that only an account that is not already
+% "live" can be added
+ add_account(st : BCstatetype, acc : AccountNo)  : Maybe[BCstatetype] =
+                  COND 
+                     NOT(member(acc, st`liveaccounts)) -> 
+                                  Some(st WITH [liveaccounts := union(st`liveaccounts,singleton(acc))]),
+                     ELSE -> None                                
+                  ENDCOND
+		  
+% Can only add non-live accounts as new live accounts
+ add_account_1 : THEOREM 
+     FORALL (st : BCstatetype, acc : AccountNo) :
+               some?(add_account(st, acc)) IFF NOT member(acc, st`liveaccounts)
+
+% Deleting an account
+ delete_account(st : BCstatetype, acc : AccountNo) : Maybe[BCstatetype] =
+                  COND 
+                     member(acc, st`liveaccounts) -> 
+                                  Some(st WITH [liveaccounts := difference(st`liveaccounts, singleton(acc)) ]),
+                     ELSE      -> None                                
+                  ENDCOND
+
+% The state only changes iff the account was already live
+ delete_acc_1 : THEOREM
+     FORALL (st : BCstatetype, acc : AccountNo) :
+              none?(delete_account(st, acc)) IFF NOT member(acc, st`liveaccounts)
+
+% Need to add a transaction to the pool too
+ add_transaction(pool : TQtype, trans : Transaction) : TQtype = union(pool, singleton(trans))
+
+ END BCtheory
+ 

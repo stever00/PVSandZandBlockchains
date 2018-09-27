@@ -4,7 +4,7 @@ BCtheory: THEORY
 % Adding a new account with a given amount of gas
 % Some analysis here would be to prove that only an account that is not already
 % "live" can be added
- add_account(st : BCstatetype, acc : AccountNo, gas : Gas)  : Maybe[BCstatetype] =
+ add_account(st : BCstatetype, acc : AccountNo, gas : Gas) : Maybe[BCstatetype] =
                   COND 
                      NOT(memberfs(acc, st`liveaccounts)) -> 
                                   Some(st WITH [liveaccounts := st`liveaccounts o singfs(acc),
@@ -16,13 +16,13 @@ BCtheory: THEORY
 					  ]),
                      ELSE -> None                                
                   ENDCOND
-% Can only add non-live accounts as new live accounts
-%*********5*********
+
  add_account_1 : THEOREM 
      FORALL (st : BCstatetype, acc : AccountNo, gas : Gas) :
-               some?(add_account(st, acc, gas)) IFF NOT memberfs(acc, st`liveaccounts)
+               none?(add_account(st, acc, gas)) IFF NOT memberfs(acc, st`liveaccounts)
 
-% Deleting an account
+% A good analysis step here would be to prove that an account cannot be deleted unless
+% the amount of cash in it is zero (this does not hold given the definition as it stands :) !!)
  delete_account(st : BCstatetype, acc : AccountNo) : Maybe[BCstatetype] =
                   COND 
                      memberfs(acc, st`liveaccounts) -> 
@@ -41,15 +41,13 @@ BCtheory: THEORY
 % Example properties that delete_account must have:
 
 % The state only changes iff the account was already live
-% QED Run time  = 0.28 secs.
-%*******6*******
+% QED Run time  = 0.28 secs.		  
 delete_acc_1 : THEOREM
      FORALL (st : BCstatetype, acc : AccountNo) :
               none?(delete_account(st, acc)) IFF NOT memberfs(acc, st`liveaccounts)
 
 % An account can be deleted iff it holds zero cash
-%
-%********7******
+% This fails :)
 delete_acc_2 : THEOREM
      FORALL (st : BCstatetype, acc : AccountNo) :
              some?(delete_account(st, acc)) IFF st`accounts(acc) = 0 
@@ -61,47 +59,45 @@ delete_acc_2 : THEOREM
 % a deployer to a miner) to the BC
 % Any sort of failure leaves the state unchanged.
 
-% Some analysis here would be to prove that a transaction is valid only iff
-% both accounts mentioned are "live" (this is not checked, as the subsequent proof shows...)
-% and the amount being tranferred is actually
+% Some analysis here would be to prove that a transaction if valid only if
+% both accounts mentioned are "live" and the amount being tranferred is actually
 % in the deployer's account
- transition(st : BCstatetype, trans : Transaction, miner : AccountNo) : Maybe[BCstatetype] =        
+ transition(st : BCstatetype, trans : Transaction, macc : AccountNo) : Maybe[BCstatetype] =        
              COND 
-                     memberfs(miner, st`liveaccounts)
-%		     AND memberfs(trans`deployer, st`liveaccounts)
-		     -> 
+                     memberfs(macc, st`liveaccounts) -> 
                        LET dgas = st`accounts(trans`deployer)
 		       IN
-%*******0******
-%		           IF dgas - trans`gas >= 0
-%			   THEN
-			      LET mgas = st`accounts(miner),
+% *** An important line...without it we cannot discharge a proof obligation
+% And of course it crucially enforces the fact we are dealing with cash not balance`xtc
+
+		           IF dgas - trans`gas >= 0
+			   THEN
+			      LET mgas = st`accounts(macc),
                                   newdgas = dgas - trans`gas,
                                   newmgas  = mgas + trans`gas,
+% This is needed to "force" evaluation in PVSio...which is clearly silly!
 				  oldaccounts = st`accounts,
 		                  newaccounts = LAMBDA (x : AccountNo) : IF x = trans`deployer
 		       		     	       	 	                 THEN newdgas
-							                 ELSE IF x = miner
+							                 ELSE IF x = macc
 						                              THEN newmgas
 							                      ELSE oldaccounts(x)
 							                      ENDIF
 								         ENDIF
                               IN
-                               Some(st WITH [accounts := newaccounts])
-%			   ELSE None
-%			   ENDIF
-                                 ,
-                     ELSE -> None
+                               st WITH [accounts := newaccounts]
+			   ELSE st
+			   ENDIF,
+                     ELSE -> st
              ENDCOND
-	     
-%*********8*********
+
 transition_1 : THEOREM
-      FORALL (st : BCstatetype, trans : Transaction, miner : AccountNo) :
+      FORALL (st : BCstatetype, trans : Transaction, macc : AccountNo) :
                 memberfs(trans`deployer, st`liveaccounts) AND
 		st`accounts(trans`deployer) >= trans`gas AND
-		memberfs(miner, st`liveaccounts)
+		memberfs(macc, st`liveaccounts)
 		IFF
-                some?(transition(st, trans, miner))
+                some?(transition(st, trans, macc))
 
 
 % Then all the above need lifting into configurations
@@ -113,7 +109,7 @@ transition_1 : THEOREM
 					 ENDCASES]
 
  c_delete_account(config : Configtype, acc : AccountNo) : Configtype =
-                  config WITH [ state := CASES delete_account(config`state, acc) OF
+                   config WITH [ state := CASES delete_account(config`state, acc) OF
 			                    Some(s) : s,
 			                    None    : config`state
 					 ENDCASES]
@@ -123,10 +119,7 @@ transition_1 : THEOREM
 
 % We do a transition with trans and change just the state part of the configuration
  c_transition(config : Configtype, trans : Transaction, miner : AccountNo) : Configtype =
-                  config WITH [ state := CASES transition(config`state, trans, miner) OF
-			                    Some(s) : s,
-			                    None    : config`state
-					 ENDCASES]
+                            config WITH  [ state := transition(config`state, trans, miner) ]
 
 
 % Then a configuration change involves taking a transaction off the current queue
@@ -144,14 +137,14 @@ transition_1 : THEOREM
 
 % This should fail (and leave the state unchanged) since a0 doesn't have
 % enough in their account to spend 10
- % display_state(transition(BCstate_init,(# gas := 10, deployer := a0 #),a9));
+ % display_state(transition(BCstate_init,(# gas := 10, deployer := a0 #),a0,a9));
 
 % This is just testing to see that add_account works...it does! It adds 20 to a1's account
 % having added a1 to the live accounts "set"
  % display_state(add_account(BCstate_init,a1,20));
 
 % This is OK too..
-% ****1*****display_state(add_account(add_account(BCstate_init,a1,20),a2,30));
+ % display_state(add_account(add_account(BCstate_init,a1,20),a2,30));
 
 % So it this....
  % display_state(delete_account(add_account(BCstate_init,a1,20),a1));
@@ -160,10 +153,11 @@ transition_1 : THEOREM
 % problem with PVSio!!!
 % So we add 20 to a1's account, and then a1 spends 10 with a9
 % BUT...we get no result returned.......
-% ******2******display_state(transition(add_account(BCstate_init,a1,20),(# gas := 10, deployer := a1 #),a9));
+ % display_state(transition(add_account(BCstate_init,a1,20),(# gas := 10, deployer := a1 #),a1,a9));
+% SO WHAT IS WRONG WITH transition???
 
 % Well, it would seem nothing is, since this seems to be evaluated (but of course can't be displayed)...
-% transition(add_account(BCstate_init,a1,20),(# gas := 10, deployer := a1 #),a9);
+% transition(add_account(BCstate_init,a1,20),(# gas := 10, deployer := a1 #),a1,a9);
 
 % Try...
  % conv1(LAMBDA (x : AccountNo) : IF x = a0 THEN 20 ELSE IF x = a1 THEN 30 ELSE 40 ENDIF ENDIF);
@@ -171,7 +165,7 @@ transition_1 : THEOREM
 
 %********Now on whole configurations
 %
-% *******3******** display_config(Config_init);
+% display_config(Config_init);
 %
 % display_config(c_add_account(Config_init, a1, 20));
 %
@@ -179,4 +173,4 @@ transition_1 : THEOREM
 %
 % display_config(c_add_transaction(Config_init, (# gas := 10, deployer := a0 #)));
 %
-% *******4********display_config(c_change(Config_init, a0));
+% display_config(c_change(Config_init, a0));

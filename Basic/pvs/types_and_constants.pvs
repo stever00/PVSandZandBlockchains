@@ -32,11 +32,6 @@ types_and_constants : THEORY
                          state : BCstatetype 
                       #]
 
-
-
-
-
-
 % For shadowing the accounts function  
    Accounts: TYPE = [# a0: Cash, a1: Cash, a2: Cash, a3: Cash, a4 : Cash, a5 : Cash, 
                                         a6 : Cash, a7 : Cash, a8 : Cash, a9 : Cash #]

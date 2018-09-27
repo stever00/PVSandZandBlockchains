@@ -1,0 +1,38 @@
+{
+ "widgetMaps": [
+  {
+   "type": "display",
+   "id": "display_bcstate-currentBC_81faaa04-cc2c-40c7-b4f7-134966b28f44",
+   "displayKey": "bcstate.currentBC",
+   "auditoryFeedback": "disabled",
+   "visibleWhen": "true",
+   "fontSize": "20",
+   "fontColor": "white",
+   "backgroundColor": "black"
+  },
+  {
+   "type": "display",
+   "id": "display_bcstate-liveaccounts_21ef1437-a11f-42cf-f79b-5c241ab8476b",
+   "displayKey": "bcstate.liveaccounts",
+   "auditoryFeedback": "disabled",
+   "visibleWhen": "true",
+   "fontSize": "20",
+   "fontColor": "white",
+   "backgroundColor": "black"
+  }
+ ],
+ "regionDefs": [
+  {
+   "class": "display_bcstate-currentBC_81faaa04-cc2c-40c7-b4f7-134966b28f44",
+   "shape": "rect",
+   "coords": "218.71875,90,421.71875,119",
+   "href": null
+  },
+  {
+   "class": "display_bcstate-liveaccounts_21ef1437-a11f-42cf-f79b-5c241ab8476b",
+   "shape": "rect",
+   "coords": "216.71875,149,410.71875,174",
+   "href": null
+  }
+ ]
+}

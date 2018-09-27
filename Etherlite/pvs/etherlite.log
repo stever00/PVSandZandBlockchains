@@ -1,0 +1,8 @@
+
+Context changed to ~/hubiC/PVS/pvsio-web/examples/projects/Etherlite/
+Prelude library PVSio not found
+Typechecking
+Parsing etherlite
+etherlite parsed in 0.05 seconds
+Typechecking etherlite
+etherlite_language typechecked in 0.30s: No TCCs generated
