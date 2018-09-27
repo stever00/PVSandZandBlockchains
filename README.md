@@ -1,5 +1,5 @@
-# PVS and Blockchains
-Modelling blockchains in PVS---from the absurdly abstract to the more-or-less real
+# PVS, Z and Blockchains
+Modelling blockchains in PVS and Z---from the absurdly abstract to the more-or-less real
 
 (Notes below from a talk I gave at Data61 in Setpember 2018)
 
@@ -47,6 +47,15 @@ Using PVS
 
 􏰀 particularly property-driven development
 
+Using Z
+-------
+
+Long pedigree
+
+􏰀 Personal experience
+
+Express (some of) the Z models in PVS too
+
 
 A plan
 ------
@@ -55,6 +64,8 @@ A model of a trivial blockchain in PVS
 
 􏰀 Some proofs of simple properties—which guide the model in a
 modelling/validation cycle 􏰀 A plan for what’s next
+
+An abstract UTXO blockchain
 
 􏰀 The simplified Etherlite in PVS (Nikoli ́c et al.)
 
