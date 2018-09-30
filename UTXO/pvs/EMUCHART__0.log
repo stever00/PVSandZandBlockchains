@@ -1,9 +1,0 @@
-
-Context changed to ~/hubiC/PVS/pvsio-web/examples/projects/BCethprototype/pvs/
-Prelude library PVSio not found
-Typechecking
-Restored theory from /Users/stever/hubiC/PVS/pvsio-web/examples/projects/BCethprototype/pvs/pvsbin/Maybe.bin in 0.10s (load part took 0.06s)
-Restored theory from /Users/stever/hubiC/PVS/pvsio-web/examples/projects/BCethprototype/pvs/pvsbin/types_and_constants.bin in 0.14s (load part took 0.04s)
-Restored theory from /Users/stever/hubiC/PVS/pvsio-web/examples/projects/BCethprototype/pvs/pvsbin/pvsioweb_utils.bin in 0.02s (load part took 0.01s)
-Restored theory from /Users/stever/hubiC/PVS/pvsio-web/examples/projects/BCethprototype/pvs/pvsbin/BCtheory.bin in 0.05s (load part took 0.01s)
-Restored theory from /Users/stever/hubiC/PVS/pvsio-web/examples/projects/BCethprototype/pvs/pvsbin/EMUCHART__0.bin in 0.06s (load part took 0.00s)

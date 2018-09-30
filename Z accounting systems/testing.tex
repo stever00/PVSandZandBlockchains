@@ -1,0 +1,40 @@
+\begin{schema}{RState}
+S\\
+T
+\end{schema}
+
+\begin{schema}{Init}
+state : \power RState
+\where
+\forall s : state @ s.a1 = s.b1\\
+\end{schema}
+
+\begin{schema}{S}
+a1 : \nat\\
+a2 : \nat
+\where
+a1 \leq 1\\
+a2 \leq 2
+\end{schema}
+
+\begin{schema}{T}
+b1 : \nat\\
+b2 : \nat
+\where
+b1 \leq 1\\
+b2 \leq 1
+\end{schema}
+
+\begin{schema}{RTS}
+rts : \power RState
+\where
+\forall r : rts @
+r.a1 = r.b1 \land r.a2 = r.b2+1
+\end{schema}
+
+\begin{schema}{Invariant}
+state : \power RState\\
+rts: RTS
+\where
+state \subseteq rts
+\end{schema}

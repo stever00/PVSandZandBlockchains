@@ -1,0 +1,6 @@
+digraph current_state {
+graph [nodesep=1.5, ranksep=1.5];
+1 [shape=doubleoctagon, color="#99BF38", fontsize=12, penwidth=2, label="a(1) = rec(a1:2,a2:3),a(2) = rec(a1:0,a2:0),b(1) = rec(b1:1,b2:2),\nb(2) = rec(b1:0,b2:1)"];
+
+
+}

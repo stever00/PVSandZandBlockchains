@@ -1,0 +1,66 @@
+\begin{schema}{A}
+a : \seq S
+\where
+\# a = 3
+\end{schema}
+
+\begin{schema}{B}
+b : \seq T
+\where
+\# b = 3
+\end{schema}
+
+\begin{zed}
+State \defs A \land B
+\end{zed}
+
+\begin{schema}{S}
+a1 : \nat\\
+a2 : \nat
+\end{schema}
+
+\begin{schema}{T}
+b1 : \nat\\
+b2 : \nat
+\end{schema}
+
+\begin{schema}{RTS}
+S\\
+T\\
+\where
+a1 = b1 + 1\\
+a2 = b2 + 1
+\end{schema}
+
+\begin{zed}
+RTShideA \defs [T | \exists S @ RTS]\\
+RTShideB \defs [S | \exists T @ RTS]
+\end{zed}
+
+%\begin{schema}{RTShideA}
+%S
+%\where
+%\exists T @ RTS
+%\end{schema}
+%
+%\begin{schema}{RTShideB}
+%T
+%\where
+%\exists S @ RTS
+%\end{schema}
+%
+\begin{schema}{R}
+State\\
+RTShideA\\
+RTShideB
+\where
+\#a = \#b\\
+\forall i : \nat_1 | i \leq \#a @ \\
+      \theta RTShideA = b(i) \land \theta RTShideB = a(i)
+\end{schema}
+
+\begin{schema}{Init}
+State
+\where
+[S ; T | R]
+\end{schema}
