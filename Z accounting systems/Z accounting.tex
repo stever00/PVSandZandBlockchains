@@ -560,7 +560,7 @@ which by substitution specialise to:
 
 \noindent Correctness:
 \[
-\forall SingleState; DoubleState; DoubleState' @ \pre DoSOmeBusiness \land R \land DoSomeDoubleBusiness \implies \exists SingleState' @ R' \land DoSomeBusiness
+\forall SingleState; DoubleState; DoubleState' @ \pre DoSomeBusiness \land R \land DoSomeDoubleBusiness \implies \exists SingleState' @ R' \land DoSomeBusiness
 \]
 
 We consider Applicability first:
@@ -641,7 +641,7 @@ Any outputs from a transaction say how much cash they contain and who owns it
   TransOutput \defs [name : TRANSACTIONNAME, cash : CASH, owner : ACCOUNTNO]
  \]
  
-( I guess we don't need to show that the owner is a current live account? There are accounts with no live owners. Though this would be useful to consider further as it has a bearing on reproducing some of the results in the ``Suicidal" paper...)
+(I guess we don't need to show that the owner is a current live account? There are accounts with no live owners. Though this would be useful to consider further as it has a bearing on reproducing some of the results in the ``Suicidal" paper...)
                        
  We are representing a transaction by how much is being transferred from where (which inputs)
  and to where (which outputs), together with its name (and a requirement that all the outputs in a transaction are tagged with its name). So we have:
@@ -674,12 +674,12 @@ Finally, this is the state of the blockchain abstracted to just show all the acc
  We can see that, by induction, as a generalisation of this story, the unspent output for a list of transactions of the form $h : t$ is the unspent outputs from the tail (list) $t$, (set) minus the coins input to the (head) transaction $h$, unioned with the outputs of $h$. And to start the inductive definition the unspent outputs of the initial blockchain are all the outputs of that first transaction which is the sole transaction at that point. To summarise, we define:
  \[
  unspentOutputs\ [h] =_{def} h.outputs\\
- unspentOutputs\ (h : t) =_{def} unspentOutputs(t) \setminus ItoO(h,t)\  \cup h.outputs
+ unspentOutputs\ (h : t) =_{def} unspentOutputs(t) \setminus ItoO(h,t)\  \cup\ h.outputs
  \]
  
  Note that we cannot simply use $h.inputs$ as the second term in the second right-hand side above (consider the types!), so we need the function $ItoO$ to map $h.inputs$ to the outputs within $t$ that they are each formed from. We have:
  \[
-ItoO(h, [])  =_{def} \emptyset\\
+ItoO(h, [\ ])  =_{def} \emptyset\\
 ItoO(h, (h' : t) ) =_{def} ItoO(h, t) \cup\\
 \t2 \bigcup_{i \in h.inputs}  \{ c : CASH | i.transaction = h'.name \land \\
 \t3 \exists o' : TransOutput | o' \in h'.outputs @ i.spender = o'.owner \land o'.cash = c @ \\
@@ -689,7 +689,7 @@ ItoO(h, (h' : t) ) =_{def} ItoO(h, t) \cup\\
 A transaction in UTXO is $valid$ as long as:
 \begin{itemize}
 \item
- the cash input and the cash output are the same (remember we are hiding anything to do with the $security$ of account use for now; not to do so would mean also requiring that the sender can prove ownership of the coin that is being sent---orthogonal, and perhaps something to do later)'
+ the cash input and the cash output are the same (remember we are hiding anything to do with the $security$ of account use for now; not to do so would mean also requiring that the sender can prove ownership of the coin that is being sent---orthogonal, and perhaps something to do later)
  \item
   and all the inputs in the current transaction were amongst the outputs of previously occurring valid transactions.
 \end{itemize}
