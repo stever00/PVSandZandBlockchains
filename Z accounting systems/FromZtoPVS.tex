@@ -29,9 +29,219 @@ Done via a simple accounting system as an example.
 
 \section{A Z specification of a simple accounting system}
 
+We have given sets
+ 
+\[
+[DATE, TEXT, MONEY]
+\]
+
+and the useful schema
+
+\begin{schema}{Transaction_0}
+date : DATE\\
+description : TEXT\\
+amount : MONEY
+\end{schema}
+
+Now the state space for the account is just a sequence of transactions (with an initial state with no transactions):
+
+\begin{schema}{SingleState}
+ssaccount : \seq Transaction_0
+\end{schema}
+
+\begin{schema}{InitSingleState}
+SingleState
+\where
+saccount = < >
+\end{schema}
+
+Then we finally have a single state-changing operation, which itself uses an operation that just sets-up a new transaction (this follows a, simplified, version of the Z idiom of promotion...done here just because this might be a useful bit of structuring when things get more complicated later..)
+
+\begin{schema}{NewTransaction_0}
+Transaction_0'\\
+date? : DATE\\
+description? : TEXT\\
+amount? : MONEY
+\where
+date' = date?\\
+description' = description?\\
+amount' = amount?
+\end{schema}
+
+\begin{schema}{\Phi DoSomeBusiness}
+\Delta SingleState\\
+Transaction_0'\\
+\where
+saccount' = saccount \cat < \theta Transaction_0' >
+\end{schema}
+
+We then promote this local operation (which works on a single transaction) to the whole system (``the accounts") using the following:
+\[
+DoSomeBusiness_0 \defs \exists Transaction_0' @ \Phi DoSomeBusiness \land New Transaction_0
+\]
+
 \section{Moving from the Z to a PVS rendition step by step}
 
+The basic simple correspondence between Z schema types (like $Transaction_0$) and PVS record types is the starting point. We can then go on to deal with schemas themselves since they are just schema types extended to be dependent, in the sense that they use a predicate, which depends on the observations in the schema, to pick out only $some$ bindings to be in the schema (considered as a set) rather than $all$ bindings in the type, which is what schema types do, i.e. schemas are just schema types with (perhaps) some bindings excluded due to the predicate part.
 
+As we see, this gets very messy eventually because PVS does not have counterparts to inclusions or any of the convenient language features that gives a \emph{schema calculus} in Z (as far as I can tell). But, the aim is simply to allow a Z specification to be transliterated into correct (if messy) PVS so that proofs etc. might be carried out. No one needs to read it!
 
+Even before that, though, we have some given sets to deal with. Since these are very abstract (they come with no information save that they exist) then they act as what PVS would consider to be type constants (and later we might be more sophisticated and model them as parameters for a theory).
+
+For now, then, we have:
+
+\[
+[DATE, TEXT, MONEY]
+\]
+is given in PVS as
+\[
+DATE, TEXT, MONEY : TYPE
+\]
+Then we have (since we are dealing with just a schema type):
+\begin{schema}{Transaction_0}
+date : DATE\\
+description : TEXT\\
+amount : MONEY
+\end{schema}
+is given in PVS as
+\[
+Transaction_0 : TYPE = [\# date : DATE, description : TEXT, amount : MONEY \#]
+\]
+and the same idea works for the next schema type:
+\begin{schema}{SingleState}
+ssaccount : \seq Transaction_0
+\end{schema}
+which in PVS is
+\[
+SingleState : TYPE = [\# ssaccount :  finseq[Transaction_0] \#]
+\]
+
+When we move to more general schemas, i.e. not just schema types, then we are, in PVS terms, dealing with dependency---a value is in the type if some conditions \emph{on the value} are met, so whether the value is in the type or not depends on whether the condition on the value is met or not. Since the values in question come from a schema type (ultimately) then they are bindings (in Z) or records (in PVS), which we saw at the level of types in $Transaction_0$ and $SingleState$ above. In Z terms we view a schema as a set of bindings whose elements satisfy the predicate part of the schema in question. So, in PVS, we deal with a set of records whose components satisfy a predicate. We have:
+\begin{schema}{InitSingleState}
+SingleState
+\where
+saccount = < >
+\end{schema}
+rendered in PVS as
+\[
+InitSingleState : TYPE = \{ s : SingleState | s`ssaccount = empty\_seq\}
+\]
+
+This idea is really all we need. So, we continue, recalling that so-called ``operation schemas" in Z are just schemas which follow the convention that (in general) their bindings (and hence their types) consist of observations from a ``pre-state", observations from a ``post-state" which are primed, and observations of any inputs to and outputs from the operation, indicated by having the observation names end in ``?" or ``!" respectively. Here we follow that convention as far as PVS allows. In the first example here there are no pre-state observations, and sadly PVS does not allow ``primes" in identifiers so we use underscore instead (and question marks ARE allowed, but later we will see that exclamation marks are not), or inclusions as such (hence the use of WITH to keep at least some helpful structuring) and even with the WITH we have to introduce a new type identifier since PVS does not allow type expressions where a type identifier is allowed, which is odd:
+\begin{schema}{NewTransaction_0}
+Transaction'\\
+date? : DATE\\
+description? : TEXT\\
+amount? : MONEY
+\where
+date' = date?\\
+description' = description?\\
+amount' = amount?
+\end{schema}
+in PVS is
+\[NT\_0Type : TYPE = Transaction\_0\ WITH\ [\# date? : DATE, \\
+\t10 \ \ \  description? : TEXT, \\
+\t10\ \  \ amount? : MONEY \#]
+\]
+\[
+NewTransaction\_0 : TYPE = \{nt\_: NT\_0Type | nt\_`date = nt\_`date?\ AND\\
+ \t10       \ \ \   \     \                                 nt\_`description = nt\_`description?\ AND\\
+\t10		\ \ \ 	\	\	      nt\_`amount = nt\_`amount? \}
+\]
+
+Now consider
+\begin{schema}{\Phi DoSomeBusiness}
+\Delta SingleState\\
+Transaction_0'\\
+\where
+saccount' = saccount \cat < \theta Transaction_0' >
+\end{schema}
+
+The $\Delta$ inclusion stands for two inclusions of $SingleState$ and $SingleState'$ so we have to define this. We have the following:
+\[
+Transaction\_0\_ : TYPE = [\# date\_ : DATE, description\_ : TEXT, amount\_ : MONEY \#]
+\]
+\[
+SingleState\_ : TYPE = [\# ssaccount\_ :  finseq[Transaction\_0] \#]
+\]
+\[
+DeltaSingleState : TYPE = SingleState\ WITH\ SingleState\_
+\]
+\[
+PhiDSB\_Type : TYPE = DeltaSingleState\ WITH\ Transaction\_0\_
+\]
+\[    
+PhiDoSomeBusiness : TYPE = \{phidsb : PhiDSB\_Type | phidsb`ssaccount\_ =\\
+   \t8                                          o(phidsb`ssaccount,\\
+   \t10                                                singfs((\# date := phidsb`date\_,\\
+	\t10					             description := phidsb`description\_,\\
+	\t10						     amount := phidsb`amount\_ \#)))\}
+\]
+(where $singfs$ turns a value into the single item in a singleton finite sequence).
+
+Now, hiding of types in PVS.....!!!!!
+It's already apparent that there's no counterpart to the schema calculus in PVS (which is OK since there are no schemas :) ) so hiding (existential quantification over schemas) needs to be modelled inside the set brackets in the predicate part... There is a certain amount of regularity to this, given the above, though...but first we need to unfold the existentially quantified schema expression...so the work we did above concerning $PhiDSB$ and so on was, in the end, wasted since we cannot in PVS use it...
+\[
+DoSomeBusiness_0 \defs \exists Transaction_0' @ \Phi DoSomeBusiness \land New Transaction_0
+\]
+This is an equal, alternative definition:
+\begin{schema}{DoSomeBusiness_0}
+\Delta SingleState\\
+date? : DATE\\
+description? : TEXT\\
+amount? : MONEY
+\where
+\exists d : DATE; desc : DESCRIPTION; a : MONEY @\\
+\t1 d = date? \land desc = description? \land a = amount? \land \\
+\t1 saccount' = saccount \cat \lbind date \mapsto d, description \mapsto desc, amount \mapsto a \rbind
+\end{schema}
+
+\noindent as some schema calculating shows. 
+
+This can, using the ideas we have already seen, be directly modelled as:
+\[
+DSB\_Type : TYPE = DeltaSingleState\ WITH\ [\# date? : DATE, \\
+\t11  description? : TEXT, \\
+\t11 amount? : MONEY \#]
+\]
+\[
+DoSomeBusiness : TYPE = \{dsb : DSB\_Type |  EXISTS (d : DATE, desc : TEXT, a : MONEY) :\\
+\t10 d = dsb`date?\ AND\ desc = dsb`description?\ AND\\
+\t10 a = dsb`amount?\ AND\\
+\t10 dsb`ssaccount\_ = o(dsb`ssaccount,  singfs((\# date := d,\\
+	\t10					             description := desc,\\
+	\t10						     amount := a \#)))\}
+         
+\]
+
+Of course, when we are doing Z we'd immediately simplify the schema $DoSomeBusiness_0$ using the one-point rule inside the predicate to give a simpler schema:
+\begin{schema}{DoSomeBusiness_0}
+\Delta SingleState\\
+date? : DATE\\
+description? : TEXT\\
+amount? : MONEY
+\where
+saccount' = saccount \cat \lbind date \mapsto date?, description \mapsto description?, amount \mapsto amount? \rbind
+\end{schema}
+
+Not surprisingly, since they use the same logic, the relevant instantiation of the one-point rule here is a theorem in PVS, so we have the following (which shows the equivalence of the two predicate parts of the two versions of $DoSomeBusiness_0$):
+\[
+one\_point : THEOREM\\
+\t2 FORALL (dsb : DSB\_Type) :\\
+ \t4     EXISTS (d : DATE, desc : TEXT, a : MONEY) :\\
+   \t6                             d = dsb`date?\ AND\\
+  \t6				desc = dsb`description?\\
+	\t6			AND\ a = dsb`amount?\ AND\\
+	\t6			dsb`ssaccount\_ =\\
+	\t8			    o(dsb`ssaccount, singfs((\# date := d,\\
+	\t10					               description := desc,\\
+	\t10					               amount := a \#)))\\
+     \t4 IFF\\
+     \t4 dsb`ssaccount\_ = o(dsb`ssaccount, singfs((\# date := dsb`date?,\\
+              \t6                                   description := dsb`description?,\\
+		\t6				 amount := dsb`amount? \#)))
+\]
+
+\section{Now for some proofs...}
 
 \end{document}

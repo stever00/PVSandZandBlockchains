@@ -1,0 +1,97 @@
+accounting : THEORY
+
+BEGIN
+
+DATE, TEXT, MONEY : TYPE
+
+% We still have the basic idea of schemas a sets of bindings which turns up in PVS
+% models for schemas being sets of records.
+% When the schemas are simply schema types
+% (as Z calls them, i.e. schemas with predicate part "true") then the schemas
+% are just record types, because these types are sets of records, i.e. sets of bindings
+% in Z
+
+Transaction_0 : TYPE = [# date : DATE, description : TEXT, amount : MONEY #]
+
+SingleState : TYPE = [# ssaccount :  finseq[Transaction_0] #]
+
+% Then, when the predicate part of a schema is not just "true", i.e. when not
+% every binding is in the set denoted by the schema, i.e. when not every record in
+% the corresponding PVS type is in the set, then we use dependent subtyping with the
+% counterpart ot a Z predicate part
+% to restrict the records in the set, just as Z does
+
+InitSingleState : TYPE = {s : SingleState | s`ssaccount = empty_seq}
+
+NT_0Type : TYPE = Transaction_0 WITH [# date? : DATE, description? : TEXT,
+                                                 amount? : MONEY #]
+
+% Sadly we cannot use "primes" in identifiers in PVS :( so we use underscore
+NewTransaction_0 : TYPE = {nt_ : NT_0Type | nt_`date = nt_`date? AND
+                                            nt_`description = nt_`description? AND
+					    nt_`amount = nt_`amount? }
+
+% Type expressions, it seems, cannot be used in place of type identifiers!!!!
+%NewTransaction_0 : TYPE = {nt_ : Transaction_0 WITH [# date? : DATE, description? : TEXT,
+%                                           amount? : MONEY #] | nt_`date = nt_`date? AND
+%                                           nt_`description = nt_`description? AND
+%					    nt_`amount = nt_`amount? }
+
+% Since there is no priming convention in PVS we have to define primed (using underscore)
+% versions...
+Transaction_0_ : TYPE = [# date_ : DATE, description_ : TEXT, amount_ : MONEY #]
+
+SingleState_ : TYPE = [# ssaccount_ :  finseq[Transaction_0] #]
+
+DeltaSingleState : TYPE = SingleState WITH SingleState_
+
+PhiDSB_Type : TYPE = DeltaSingleState WITH Transaction_0_
+
+singfs[T : TYPE](elem : T) : finseq[T] =
+      (# length := 1, seq := LAMBDA (x : nat) : elem #)
+      
+PhiDoSomeBusiness : TYPE = {phidsb : PhiDSB_Type | phidsb`ssaccount_ =
+                                             o(phidsb`ssaccount,
+                                                 singfs((# date := phidsb`date_,
+						           description := phidsb`description_,
+							   amount := phidsb`amount_ #)))}
+
+% Now, hiding of types in PVS.....!!!!!
+% It's already apparent that there's no counterpart to the schema calculus in PVS
+% (which is OK since there are no schemas :) ) so hiding (existential quantification
+% over schemas) needs to be modelled inside the set brackets in the predicate part...
+% There is a certain amount of regularity to this, given the above...
+
+DSB_Type : TYPE = DeltaSingleState WITH [# date? : DATE,
+                                           description? : TEXT,
+					   amount? : MONEY#]
+
+
+DoSomeBusiness : TYPE = {dsb : DSB_Type |
+                           EXISTS (d : DATE, desc : TEXT, a : MONEY) :
+                                d = dsb`date? AND
+				desc = dsb`description?
+				AND a = dsb`amount? AND
+				dsb`ssaccount_ =
+				    o(dsb`ssaccount, singfs((# date := d,
+						               description := desc,
+						               amount := a #)))}
+% This just shows that the usual "one-point rule" that we use in Z all the time
+% to simplify existential predicates does (of course) exist in PVS
+% which means that the following theorem is provable
+one_point : THEOREM
+ FORALL (dsb : DSB_Type) :
+      EXISTS (d : DATE, desc : TEXT, a : MONEY) :
+                                d = dsb`date? AND
+				desc = dsb`description?
+				AND a = dsb`amount? AND
+				dsb`ssaccount_ =
+				    o(dsb`ssaccount, singfs((# date := d,
+						               description := desc,
+						               amount := a #)))
+     IFF
+     dsb`ssaccount_ = o(dsb`ssaccount, singfs((# date := dsb`date?,
+                                                 description := dsb`description?,
+						 amount := dsb`amount? #)))
+
+END accounting

@@ -1,0 +1,14 @@
+(accounting
+ (one_point 0
+  (one_point-1 nil 3749195269 ("" (grind) nil nil)
+   ((DATE type-decl nil accounting nil)
+    (MONEY type-decl nil accounting nil)
+    (TEXT type-decl nil accounting nil)
+    (Transaction_0 type-eq-decl nil accounting nil)
+    (finseq type-eq-decl nil finite_sequences nil)
+    (DSB_Type type-eq-decl nil accounting nil)
+    (singfs const-decl "finseq[T]" accounting nil)
+    (restrict const-decl "R" restrict nil)
+    (O const-decl "finseq" finite_sequences nil))
+   shostak)))
+
