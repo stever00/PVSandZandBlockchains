@@ -646,7 +646,7 @@ Any outputs from a transaction say how much cash they contain and who owns it
  We are representing a transaction by how much is being transferred from where (which inputs)
  and to where (which outputs), together with its name (and a requirement that all the outputs in a transaction are tagged with its name). So we have:
  
- \begin{schema}{Transaction}
+\begin{schema}{Transaction}
 name : TRANSACTIONNAME\\
 inputs : \power TransInput\\
 outputs : \power TransOutput
@@ -665,22 +665,22 @@ Finally, this is the state of the blockchain abstracted to just show all the acc
  
 % However, if the owner then uses these two coins as inputs to a transaction (to make up the value required) then do we need then to be able to distinguish them? No, because given the transactions they were each, identifiably and uniquely, amongst the outputs of, which means that the owner has only one coin in each of those outputs, we can tell which coins are being spent.
  
- When it comes to identifying all the unspent coins at a certain point in the history of a blockchain, what then? At any given point in the evolution of the blockchain we have a list of valid, accepted (by consensus) transactions. At this point, the unspent coins are the unspent outputs in any transaction that has appeared so far. 
+When it comes to identifying all the unspent coins at a certain point in the history of a blockchain, what then? At any given point in the evolution of the blockchain we have a list of valid, accepted (by consensus) transactions. At this point, the unspent coins are the unspent outputs in any transaction that has appeared so far. 
  
- An output is unspent if it has not been used as an input to some subsequent transaction. Now consider the smallest blockchain, or list of transactions: it has just one block and all the coins in its outputs are unspent coins (and note that this starting block breaches the value input equals value output requirement which we use later, so it must be special, of course). 
+An output is unspent if it has not been used as an input to some subsequent transaction. Now consider the smallest blockchain, or sequence of transactions: it has just one block and all the coins in its outputs are unspent coins (and note that this starting block breaches the value input equals value output requirement which we use later, so it must be special, of course). 
  
- Now consider adding a transaction: the inputs to this transaction must be amongst those output by the first, special, transaction, and after this second transaction the unspent coins are the outputs from the first transaction, (set) minus the coins input to the second transaction (which must be amongst those output by the first transaction), unioned with the coins output from the second transaction (none of which can have been used yet since this is the last transaction in the list, i.e. on the blockchain.) 
+Now consider adding a transaction: the inputs to this transaction must be amongst those output by the first, special, transaction, and after this second transaction the unspent coins are the outputs from the first transaction, (set) minus the coins input to the second transaction (which must be amongst those output by the first transaction), unioned with the coins output from the second transaction (none of which can have been used yet since this is the last transaction in the sequence, i.e. on the blockchain.) 
  
- We can see that, by induction, as a generalisation of this story, the unspent output for a list of transactions of the form $h : t$ is the unspent outputs from the tail (list) $t$, (set) minus the coins input to the (head) transaction $h$, unioned with the outputs of $h$. And to start the inductive definition the unspent outputs of the initial blockchain are all the outputs of that first transaction which is the sole transaction at that point. To summarise, we define:
+ We can see that, by induction, as a generalisation of this story, the unspent output for a sequence of transactions of the form $< h > \cat t$ is the unspent outputs from the tail (sequence) $t$, (set) minus the coins input to the (head) transaction $h$, unioned with the outputs of $h$. And to start the inductive definition the unspent outputs of the initial blockchain are all the outputs of that first transaction which is the sole transaction at that point. To summarise, we define:
  \[
- unspentOutputs\ [h] =_{def} h.outputs\\
- unspentOutputs\ (h : t) =_{def} unspentOutputs(t) \setminus ItoO(h,t)\  \cup\ h.outputs
+ unspentOutputs\ <h > =_{def} h.outputs\\
+ unspentOutputs\ < h > \cat t =_{def} unspentOutputs(t) \setminus ItoO(h,t)\  \cup\ h.outputs
  \]
  
  Note that we cannot simply use $h.inputs$ as the second term in the second right-hand side above (consider the types!), so we need the function $ItoO$ to map $h.inputs$ to the outputs within $t$ that they are each formed from. We have:
  \[
-ItoO(h, [\ ])  =_{def} \emptyset\\
-ItoO(h, (h' : t) ) =_{def} ItoO(h, t) \cup\\
+ItoO(h, <>)  =_{def} \emptyset\\
+ItoO(h, < h' > \cat t  ) =_{def} ItoO(h, t) \cup\\
 \t2 \bigcup_{i \in h.inputs}  \{ c : CASH | i.transaction = h'.name \land \\
 \t3 \exists o' : TransOutput | o' \in h'.outputs @ i.spender = o'.owner \land o'.cash = c @ \\
 \t4 \lbind  name \bindsto h'.name, cash \bindsto c, owner \bindsto h.spender \rbind \}

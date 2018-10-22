@@ -1,0 +1,54 @@
+% This PVS is derived (according to "methods" in the example given in
+% "FromZtoPVS" and "PVSaccounting.pvs"
+
+UTXOaccounting : THEORY
+
+BEGIN
+
+TRANSACTIONNAME, ACCOUNTNO, DATE, TEXT, CASH : TYPE
+
+TransInput: TYPE =  [# transaction : TRANSACTIONNAME, spender : ACCOUNTNO #]
+
+% Something to prove here is that an input only refers to a previous transaction.
+
+% Any outputs from a transaction say how much cash they contain and who owns it
+
+TransOutput : TYPE =  [# name : TRANSACTIONNAME, cash : CASH, owner : ACCOUNTNO #]
+
+% Formalising
+%\begin{schema}{Transaction}
+%name : TRANSACTIONNAME\\
+%inputs : \power TransInput\\
+%outputs : \power TransOutput
+%\where
+%\forall o : outputs @ o.name = name
+%\end{schema}
+
+Transaction_Type : TYPE = [# name : TRANSACTIONNAME,
+                             inputs : setof[TransInput],
+			     outputs : setof[TransOutput] #]
+
+Transaction : TYPE = {t : Transaction_Type | FORALL (o : (t`outputs)) : o`name = t`name }
+
+BCstateType : TYPE = finseq[Transaction]
+
+%ItoO(h, <>)  =_{def} \emptyset\\
+%ItoO(h, < h' > \cat t  ) =_{def} ItoO(h, t) \cup\\
+%\t2 \bigcup_{i \in h.inputs}  \{ c : CASH | i.transaction = h'.name \land \\
+%\t3 \exists o' : TransOutput | o' \in h'.outputs @ i.spender = o'.owner \land o'.cash = c @ \\
+%\t4 \lbind  name \bindsto h'.name, cash \bindsto c, owner \bindsto h.spender \rbind \}
+
+
+%unspentOutputs\ [h] =_{def} h.outputs\\
+%unspentOutputs\ (h : t) =_{def} unspentOutputs(t) \setminus ItoO(h,t)\  \cup\ h.outputs
+
+unspentOutputs (bc : BCstateType) : RECURSIVE setof[TransOutput] =
+   IF bc = empty_seq
+   THEN emptyset
+   ELSE union(difference(unspentOutputs(^(bc, (2,bc`length))),ItoO(^(bc,(1,1)),
+                                                            ^(bc, (2,bc`length)))),
+                         ^(bc,(1,1))`outputs)
+   ENDIF
+   MEASURE bc`length
+
+END UTXOaccounting
