@@ -19,7 +19,7 @@ DATE, TEXT, MONEY : TYPE
 
 Transaction_0 : TYPE = [# date : DATE, description : TEXT, amount : MONEY #]
 
-SingleState_0 : TYPE = [# saccount :  finseq[Transaction_0] #]
+SingleState_0 : TYPE = [# ssaccount :  finseq[Transaction_0] #]
 
 % Then, when the predicate part of a schema is not just "true", i.e. when not
 % every binding is in the set denoted by the schema, i.e. when not every record in
@@ -27,7 +27,7 @@ SingleState_0 : TYPE = [# saccount :  finseq[Transaction_0] #]
 % counterpart ot a Z predicate part
 % to restrict the records in the set, just as Z does
 
-InitSingleState_0 : TYPE = {s : SingleState_0 | s`saccount = empty_seq}
+InitSingleState_0 : TYPE = {s : SingleState_0 | s`ssaccount = empty_seq}
 
 NT_0Type : TYPE = Transaction_0 WITH [# date? : DATE, description? : TEXT,
                                                  amount? : MONEY #]
@@ -47,7 +47,7 @@ NewTransaction_0 : TYPE = {nt_ : NT_0Type | nt_`date = nt_`date? AND
 % versions...
 Transaction_0_ : TYPE = [# date_ : DATE, description_ : TEXT, amount_ : MONEY #]
 
-SingleState_0_ : TYPE = [# saccount_ :  finseq[Transaction_0] #]
+SingleState_0_ : TYPE = [# ssaccount_ :  finseq[Transaction_0] #]
 
 DeltaSingleState_0 : TYPE = SingleState_0 WITH SingleState_0_
 
@@ -56,8 +56,8 @@ PhiDSB_0_Type : TYPE = DeltaSingleState_0 WITH Transaction_0_
 singfs[T : TYPE](elem : T) : finseq[T] =
       (# length := 1, seq := LAMBDA (x : nat) : elem #)
       
-PhiDoSomeBusiness_0 : TYPE = {phidsb : PhiDSB_0_Type | phidsb`saccount_ =
-                                             o(phidsb`saccount,
+PhiDoSomeBusiness_0 : TYPE = {phidsb : PhiDSB_0_Type | phidsb`ssaccount_ =
+                                             o(phidsb`ssaccount,
                                                  singfs((# date := phidsb`date_,
 						           description := phidsb`description_,
 							   amount := phidsb`amount_ #)))}
@@ -78,10 +78,10 @@ DoSomeBusiness_0 : TYPE = {dsb : DSB_0_Type |
                                 d = dsb`date? AND
 				desc = dsb`description?
 				AND a = dsb`amount? AND
-				dsb`saccount_ =
-				    o(dsb`saccount, singfs((# date := d,
-						              description := desc,
-						              amount := a #)))}
+				dsb`ssaccount_ =
+				    o(dsb`ssaccount, singfs((# date := d,
+						               description := desc,
+						               amount := a #)))}
 							       
 % This just shows that the usual "one-point rule" that we use in Z all the time
 % to simplify existential predicates does (of course) exist in PVS
@@ -92,12 +92,12 @@ one_point_0 : THEOREM
                                 d = dsb`date? AND
 				desc = dsb`description?
 				AND a = dsb`amount? AND
-				dsb`saccount_ =
-				    o(dsb`saccount, singfs((# date := d,
+				dsb`ssaccount_ =
+				    o(dsb`ssaccount, singfs((# date := d,
 						               description := desc,
 						               amount := a #)))
      IFF
-     dsb`saccount_ = o(dsb`saccount, singfs((# date := dsb`date?,
+     dsb`ssaccount_ = o(dsb`ssaccount, singfs((# date := dsb`date?,
                                                  description := dsb`description?,
 						 amount := dsb`amount? #)))
 
@@ -110,9 +110,9 @@ Transaction_1 : TYPE = [# date : DATE, description : TEXT, account : ACCOUNT, am
 
 Transaction_1_ : TYPE = [# date_ : DATE, description_ : TEXT, account_ : ACCOUNT, amount_ : MONEY #]
 
-SingleState_1 : TYPE = [# saccount :  finseq[Transaction_1] #]
+SingleState_1 : TYPE = [# ssaccount :  finseq[Transaction_1] #]
 
-InitSingleState_1 : TYPE = {s : SingleState_1 | s`saccount = empty_seq}
+InitSingleState_1 : TYPE = {s : SingleState_1 | s`ssaccount = empty_seq}
 
 NT_1Type : TYPE = Transaction_1_ WITH [# date? : DATE, description? : TEXT, account? : ACCOUNT,
                                                  amount? : MONEY #]
@@ -122,14 +122,14 @@ NewTransaction_1 : TYPE = {nt : NT_1Type | nt`date_ = nt`date? AND
 					    nt`account_ = nt`account? AND
 					    nt`amount_ = nt`amount? }
 
-SingleState_1_ : TYPE = [# saccount_ :  finseq[Transaction_1] #]
+SingleState_1_ : TYPE = [# ssaccount_ :  finseq[Transaction_1] #]
 
 DeltaSingleState_1 : TYPE = SingleState_1 WITH SingleState_1_
 
 PhiDSB_1_Type : TYPE = DeltaSingleState_1 WITH Transaction_1_
       
-PhiDoSomeBusiness_1 : TYPE = {phidsb : PhiDSB_1_Type | phidsb`saccount_ =
-                                             o(phidsb`saccount,
+PhiDoSomeBusiness_1 : TYPE = {phidsb : PhiDSB_1_Type | phidsb`ssaccount_ =
+                                             o(phidsb`ssaccount,
                                                  singfs((# date := phidsb`date_,
 						           description := phidsb`description_,
 							   account := phidsb`account_,
@@ -147,8 +147,8 @@ DoSomeBusiness_1 : TYPE = {dsb : DSB_1_Type |
 				desc = dsb`description? AND
 				acc = dsb`account? AND
 				a = dsb`amount? AND
-				dsb`saccount_ =
-				    o(dsb`saccount, singfs((# date := d,
+				dsb`ssaccount_ =
+				    o(dsb`ssaccount, singfs((# date := d,
 						               description := desc,
 							       account := acc,
 						               amount := a #)))}
@@ -166,9 +166,9 @@ Transaction_ : TYPE = [# date_ : DATE,
 			income_ : MONEY,
 			expenditure_ : MONEY #]
 
-SingleState : TYPE = [# saccount :  finseq[Transaction] #]
+SingleState : TYPE = [# ssaccount :  finseq[Transaction] #]
 
-InitSingleState : TYPE = {s : SingleState | s`saccount = empty_seq}
+InitSingleState : TYPE = {s : SingleState | s`ssaccount = empty_seq}
 
 NTType : TYPE = Transaction_ WITH [# date? : DATE,
                                     description? : TEXT,
@@ -182,14 +182,14 @@ NewTransaction : TYPE = {nt : NTType | nt`date_ = nt`date? AND
 					nt`income_ = nt`income? AND
 					nt`expenditure_ = nt`expenditure?}
 
-SingleState_ : TYPE = [# saccount_ :  finseq[Transaction] #]
+SingleState_ : TYPE = [# ssaccount_ :  finseq[Transaction] #]
 
 DeltaSingleState : TYPE = SingleState WITH SingleState_
 
 PhiDSB_Type : TYPE = DeltaSingleState WITH Transaction_
       
-PhiDoSomeBusiness : TYPE = {phidsb : PhiDSB_Type | phidsb`saccount_ =
-                                             o(phidsb`saccount,
+PhiDoSomeBusiness : TYPE = {phidsb : PhiDSB_Type | phidsb`ssaccount_ =
+                                             o(phidsb`ssaccount,
                                                  singfs((# date := phidsb`date_,
 						           description := phidsb`description_,
 							   account := phidsb`account_,
@@ -210,8 +210,8 @@ DoSomeBusiness : TYPE = {dsb : DSB_Type |
 				acc = dsb`account? AND
 				i = dsb`income? AND
 				e = dsb`expenditure? AND
-				dsb`saccount_ =
-				    o(dsb`saccount, singfs((# date := d,
+				dsb`ssaccount_ =
+				    o(dsb`ssaccount, singfs((# date := d,
 						               description := desc,
 							       account := acc,
 						               income := i,
@@ -225,14 +225,14 @@ one_point : THEOREM
 				acc = dsb`account? AND
 				i = dsb`income? AND
 				e = dsb`expenditure? AND
-				dsb`saccount_ =
-				    o(dsb`saccount, singfs((# date := d,
+				dsb`ssaccount_ =
+				    o(dsb`ssaccount, singfs((# date := d,
 						               description := desc,
 							       account := acc,
 						               income := i,
 							       expenditure := e #)))
      IFF
-     dsb`saccount_ = o(dsb`saccount, singfs((# date := dsb`date?,
+     dsb`ssaccount_ = o(dsb`ssaccount, singfs((# date := dsb`date?,
                                                  description := dsb`description?,
 						 account := dsb`account?,
 						 income := dsb`income?,
@@ -364,48 +364,8 @@ double_one_point : THEOREM
 
 %****** Now we start to consider the refinement
 
-% Here's the retrieve relation R
 RType : TYPE = SingleState WITH DoubleState
 
-R : TYPE = {r : RType | r`saccount`length = r`daccount`length AND
-             FORALL (i : below[r`saccount`length]) :
-                finseq_appl(r`saccount)(i)`date = finseq_appl(r`daccount)(i)`date AND
-                finseq_appl(r`saccount)(i)`description =
-			               finseq_appl(r`daccount)(i)`description AND
-		finseq_appl(r`saccount)(i)`account = finseq_appl(r`daccount)(i)`account1 AND
-	        finseq_appl(r`saccount)(i)`account = finseq_appl(r`daccount)(i)`account2 AND
-		finseq_appl(r`saccount)(i)`income = finseq_appl(r`daccount)(i)`debit2 AND
-		finseq_appl(r`saccount)(i)`expenditure =
-			               finseq_appl(r`daccount)(i)`credit1
-	    } 
-
-% And now the standard Z obligations to show double is a refinement of single
-
-% The case in Z works because the identifiers used in the various schemas give
-% equalities that are required to make this hang together. For example, DoubleState has
-% observation daccount, and since this appears in both the antecedent to the implication
-% InitDoubleState and in R, these two occurences are "linked", i.e. they are the same observation.
-% In PVS 
-
-initialisation : THEOREM
- FORALL (ds : finseq[DoubleTransaction]) :
-          ds = empty_seq IMPLIES
-            EXISTS (ss : finseq[Transaction]) : ss = empty_seq AND
-                 FORALL ( r : RType) :
-		       r`saccount = ss AND r`daccount = ds IMPLIES
-% This line above added to force the equality that we get in Z "for free" (syntactically)
-                       r`saccount`length = r`daccount`length AND
-                       FORALL (i : below[r`saccount`length]) :
-                finseq_appl(r`saccount)(i)`date = finseq_appl(r`daccount)(i)`date AND
-                finseq_appl(r`saccount)(i)`description =
-			               finseq_appl(r`daccount)(i)`description AND
-		finseq_appl(r`saccount)(i)`account = finseq_appl(r`daccount)(i)`account1 AND
-	        finseq_appl(r`saccount)(i)`account = finseq_appl(r`daccount)(i)`account2 AND
-		finseq_appl(r`saccount)(i)`income = finseq_appl(r`daccount)(i)`debit2 AND
-		finseq_appl(r`saccount)(i)`expenditure =
-			               finseq_appl(r`daccount)(i)`credit1
-
-
-
-
+R : TYPE = {r : RType | r`saccount`length = r`daccount`length } 
+						 
 END accounting

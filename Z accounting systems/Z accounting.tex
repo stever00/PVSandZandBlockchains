@@ -233,7 +233,7 @@ Note the schema has no predicate part, so we impose no conditions on the transac
 Now the state space for the account is just a sequence of transactions (with an initial state with no transactions):
 
 \begin{schema}{SingleState}
-ssaccount : \seq Transaction_0
+saccount : \seq Transaction_0
 \end{schema}
 
 \begin{schema}{InitSingleState}
@@ -249,7 +249,7 @@ Note this schema also has no predicate part, so we impose no conditions on the a
 Then we finally have a single state-changing operation, which itself uses an operation that just sets-up a new transaction (this follows a, simplified, version of the Z idiom of promotion...done here just because this might be a useful bit of structuring when things get more complicated later..)
 
 \begin{schema}{NewTransaction_0}
-Transaction'\\
+Transaction_0'\\
 date? : DATE\\
 description? : TEXT\\
 amount? : MONEY
@@ -292,7 +292,7 @@ and also add the new given type
 which causes obvious changes to the above Z as follows:
 
 \begin{schema}{NewTransaction_1}
-Transaction'\\
+Transaction_1'\\
 date? : DATE\\
 description? : TEXT\\
 account? : ACCOUNT\\ 
@@ -403,7 +403,7 @@ Date & Description & Account & Debit & Credit\\
 
 We aim to formalise the double-entry system in the same way as we have done for single-entry, and then show (as the tables above suggest) that every single-entry transaction and be made more concrete (refined to) a double-entry one. The various operations will follow the same pattern and the usual Z refinement properties will be proved.
 
-First we define what a double-entry transaction looks like and, as before, what a double-entry state is. And we need to know that their is a special sort of money amount, the blank sort.
+First we define what a double-entry transaction looks like and, as before, what a double-entry state is. And we need to know that there is a special sort of money amount, the blank sort.
 
 \begin{axdef}
 blank : MONEY
@@ -471,7 +471,7 @@ SingleState\\
 DoubleState
 \where
 \# saccount = \# daccount\\
-\forall i : \dom account @ (
+\forall i : \dom saccount @ (
 saccount(i).date = daccount(i).ddate \land\\
 saccount(i).description = daccount(i).ddescription \land\\
 saccount(i).account = daccount(i).account1 = daccount(i).account2 \land\\
@@ -495,46 +495,46 @@ Then we need to show that the refinement rules hold for any single-entry operati
 
 \noindent Init
 \[
-\forall CState' @ CInit' \implies \exists AState' @ AInit' \land R'
+\forall CState @ CInit \implies \exists AState @ AInit \land R
 \]
 
 In our case, if we take the single-entry system to be the abstract state, the double-entry to be the concrete and first consider the appropriate initialisation schemas, we have to prove:
 
 \[
-\forall DoubleState'  @ InitDoubleState' \implies \exists SingleState'  @ InitSingleState' \land R'
+\forall DoubleState  @ InitDoubleState \implies \exists SingleState  @ InitSingleState \land R
 \]
 
 Unpacking definitions gives the obligation:
 
 \[
-\forall daccount' : \seq DoubleTransaction @ daccount' = < > \implies\\
-\t5 \exists saccount' : \seq SingleTransaction' @ saccount' = < > and \land R'
+\forall daccount : \seq DoubleTransaction @ daccount = < > \implies\\
+\t5 \exists saccount : \seq SingleTransaction @ saccount = < > and \land R
 \]
 
 We can use the one-point rule on both
 
 \[
-\forall daccount' : \seq DoubleTransaction @ daccount' = < > \implies...
+\forall daccount : \seq DoubleTransaction @ daccount = < > \implies...
 \]
 
 and
 \[
-\exists saccount' : \seq SingleTransaction' @ saccount' = < > and \land R'
+\exists saccount : \seq SingleTransaction @ saccount = < > and \land R
 \]
 
 to get
 
 \begin{schema}{}
-SingleState'\\
-DoubleState'
+SingleState\\
+DoubleState
 \where
 \# < > = \# < >\\
 \forall i : \dom < > @ (
-saccount'(i).date = daccount'(i).ddate \land\\
-saccount'(i).description = daccount'(i).ddescription \land\\
-saccount'(i).account = daccount'(i).account1 = daccount'(i).account2 \land\\
-saccount'(i).income = daccount'(i).debit2 \land\\
-saccount'(i).expenditure = daccount'(i).credit1)
+saccount(i).date = daccount(i).ddate \land\\
+saccount(i).description = daccount(i).ddescription \land\\
+saccount(i).account = daccount(i).account1 = daccount(i).account2 \land\\
+saccount(i).income = daccount(i).debit2 \land\\
+saccount(i).expenditure = daccount(i).credit1)
 \end{schema}
 
 and here the first line is clearly true, and the large universally-quantified predicate is vacuously true. So, initialisation for our system holds.
