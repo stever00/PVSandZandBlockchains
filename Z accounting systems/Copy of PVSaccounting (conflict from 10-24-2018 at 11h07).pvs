@@ -367,7 +367,7 @@ double_one_point : THEOREM
 % Here's the retrieve relation R
 RType : TYPE = SingleState WITH DoubleState
 
-R : TYPE = {r : RType | r`saccount`length = r`daccount`length AND
+R : setof[RType] = {r : RType | r`saccount`length = r`daccount`length AND
              FORALL (i : below[r`saccount`length]) :
                 finseq_appl(r`saccount)(i)`date = finseq_appl(r`daccount)(i)`date AND
                 finseq_appl(r`saccount)(i)`description =
@@ -381,31 +381,25 @@ R : TYPE = {r : RType | r`saccount`length = r`daccount`length AND
 
 % And now the standard Z obligations to show double is a refinement of single
 
-% The case in Z works because the identifiers used in the various schemas give
-% equalities that are required to make this hang together. For example, DoubleState has
-% observation daccount, and since this appears in both the antecedent to the implication
-% InitDoubleState and in R, these two occurences are "linked", i.e. they are the same observation.
-% In PVS 
-
 initialisation : THEOREM
  FORALL (ds : finseq[DoubleTransaction]) :
           ds = empty_seq IMPLIES
-            EXISTS (ss : finseq[Transaction]) : ss = empty_seq AND
-                 FORALL ( r : RType) :
-		       r`saccount = ss AND r`daccount = ds IMPLIES
-% This line above added to force the equality that we get in Z "for free" (syntactically)
-                       r`saccount`length = r`daccount`length AND
-                       FORALL (i : below[r`saccount`length]) :
-                finseq_appl(r`saccount)(i)`date = finseq_appl(r`daccount)(i)`date AND
-                finseq_appl(r`saccount)(i)`description =
-			               finseq_appl(r`daccount)(i)`description AND
-		finseq_appl(r`saccount)(i)`account = finseq_appl(r`daccount)(i)`account1 AND
-	        finseq_appl(r`saccount)(i)`account = finseq_appl(r`daccount)(i)`account2 AND
-		finseq_appl(r`saccount)(i)`income = finseq_appl(r`daccount)(i)`debit2 AND
-		finseq_appl(r`saccount)(i)`expenditure =
-			               finseq_appl(r`daccount)(i)`credit1
+            EXISTS (ss : finseq[Transaction]) :
+	         ss = empty_seq AND R((# saccount := ss, daccount := ds #))
 
+% We first need to write the preconditions...
+% Directly from the definition of precondition in Z we get:
+
+PreDoSomeBusiness : setof[SingleState] = {s : SingleState | EXISTS (
+
+
+%applicability: THEOREM
+%  FORALL (ss : finseq[Transaction], ds : finseq[DoubleTransaction]) :
+%      PreDoSomeBusiness AND R((# saccount := ss, daccount := ds #)) IMPLIES
+%             PreDoSomeDoubleBusiness
+                
 
 
 
 END accounting
+

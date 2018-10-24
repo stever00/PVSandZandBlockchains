@@ -39,6 +39,27 @@
   (R_TCC1-1 nil 3749291772 ("" (subtype-tcc) nil nil) nil nil))
  (initialisation 0
   (initialisation-1 nil 3749291777
-   ("" (skolem!) (("" (flatten) (("" (postpone) nil nil)) nil)) nil)
-   nil shostak)))
+   ("" (skolem!)
+    (("" (flatten) (("" (inst 1 empty_seq) (("" (grind) nil nil)) nil))
+      nil))
+    nil)
+   ((nat nonempty-type-eq-decl nil naturalnumbers nil)
+    (below type-eq-decl nil nat_types nil)
+    (ACCOUNT type-decl nil accounting nil)
+    (DATE type-decl nil accounting nil)
+    (TEXT type-decl nil accounting nil)
+    (MONEY type-decl nil accounting nil)
+    (Transaction type-eq-decl nil accounting nil)
+    (finseq type-eq-decl nil finite_sequences nil)
+    (empty_seq const-decl "finseq" finite_sequences nil)
+    (R const-decl "setof[RType]" accounting nil)
+    (finseq_appl const-decl "[below[length(fs)] -> T]" finite_sequences
+     nil))
+   shostak))
+ (applicability 0
+  (applicability-1 nil 3749366748 ("" (grind) nil nil)
+   ((finseq_appl const-decl "[below[length(fs)] -> T]" finite_sequences
+     nil)
+    (R const-decl "setof[RType]" accounting nil))
+   shostak)))
 

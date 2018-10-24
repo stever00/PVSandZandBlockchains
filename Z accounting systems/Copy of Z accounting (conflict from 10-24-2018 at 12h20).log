@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.1.18)  24 OCT 2018 15:32
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.1.18)  24 OCT 2018 12:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -619,48 +619,32 @@ Underfull \hbox (badness 10000) in paragraph at lines 494--495
  []
 
 [9]
-Overfull \hbox (40.16621pt too wide) in alignment at lines 551--553
+Overfull \hbox (237.8968pt too wide) in alignment at lines 562--564
 [] 
  []
 
 
-Overfull \hbox (242.76344pt too wide) in alignment at lines 563--565
-[] 
- []
-
-
-Overfull \hbox (42.02249pt too wide) in alignment at lines 570--572
+Overfull \hbox (42.02249pt too wide) in alignment at lines 569--571
 [] 
  []
 
 [10]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [11]
-Underfull \vbox (badness 1533) has occurred while \output is active []
-
- [12]
-Overfull \hbox (9.09688pt too wide) in alignment at lines 665--692
+Overfull \hbox (1.35106pt too wide) in alignment at lines 671--673
 [] 
  []
 
-[13]
-Overfull \hbox (1.35106pt too wide) in alignment at lines 772--774
-[] 
- []
-
-[14]
-Overfull \hbox (2.48433pt too wide) in alignment at lines 813--819
+[11] [12]
+Overfull \hbox (2.48433pt too wide) in alignment at lines 712--718
 [] 
  []
 
 
-Overfull \hbox (4.7672pt too wide) in paragraph at lines 829--830
+Overfull \hbox (4.7672pt too wide) in paragraph at lines 728--729
 []\OT1/cmr/m/n/10.95 Here are the for-mal coun-ter-parts of those two com-po-ne
 nts for va-lid-ity for any blockchain
  []
 
-[15] [16] (./Z accounting.aux)
+[13] (./Z accounting.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -691,10 +675,10 @@ e/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive
 5/texmf-dist/fonts/type1/public/amsfonts/latxfont/lasy10.pfb></usr/local/texliv
 e/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/te
 xlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on "Z accounting.pdf" (16 pages, 228899 bytes).
+Output written on "Z accounting.pdf" (13 pages, 223685 bytes).
 PDF statistics:
- 128 PDF objects out of 1000 (max. 8388607)
- 91 compressed objects within 1 object stream
+ 119 PDF objects out of 1000 (max. 8388607)
+ 85 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
