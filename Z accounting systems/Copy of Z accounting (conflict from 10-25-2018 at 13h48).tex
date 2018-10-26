@@ -316,6 +316,8 @@ description : TEXT\\
 account : ACCOUNT\\
 income : MONEY\\
 expenditure : MONEY
+\where
+income = expenditure
 \end{schema}
 
 which flows on to give
@@ -417,7 +419,7 @@ debit1, debit2, credit1, credit2 : MONEY
 \where
 (debit1 = credit2 \land debit2 = credit1 = blank)\\
 \lor\\
-(debit2 = credit1 \land debit2 = credit1 = blank)
+(debit2 = credit1 \land debit1 = credit2 = blank)
 \end{schema}
 
 \begin{zed}
@@ -554,6 +556,9 @@ Next we consider the operations $DoSomeBusiness$ and $DoSomeDoubleBusiness$, whi
 
 which by substitution specialise to:
 
+
+%****** Need to check again with eric and derrick abut inputs here!!!!!
+
 \noindent Applicability:
 \[
 \forall SingleState; DoubleState @ \pre DoSomeBusiness \land R \implies \pre DoSomeDoubleBusiness
@@ -587,14 +592,25 @@ expenditure? : MONEY
             a= account? \land \\
             i = income? \land \\
             e = expenditure? \land \\
-            sacc = saccount \cat <  >)
+            sacc = saccount \cat <  > \land\\
+            i = e)
 \end{schema}
-\noindent and by using the one-point rule on all the existential quantifications here we can see that the predicate part is just $true$. So, and state and inputs (of the corrects types) are states we can start from, do the $DoSomeBusiness$ operation and be sure of ending in a valid state (i.e. the precondition of the operation is true). Applicability is then the trivial:
+\noindent and by using the one-point rule on all the existential quantifications here we can see that the predicate part is just $income? = expenditure?$. So, any states and inputs (of the correct types) with the required equality are states we can start from, do the $DoSomeBusiness$ operation and be sure of ending in a valid state. 
+
+The case for $DoSomeDoubleBusiness$ is similar, and we get that its precondition is 
+\[
+(debit1? = credit2? \land debit2? = credit1? = blank)\\
+\lor\\
+(debit2? = credit1? \land debit1? = credit2? = blank)
+\]
+
+
+Applicability is then:
 \[
 \forall SingleState; DoubleState @ true \land R \implies true
 \]
 
-Finally correctness. As we same, the precondition for $DoSomeBusiness$ is true so correctness in this case is the slightly simpler statement
+Finally correctness. As we saw, the precondition for $DoSomeBusiness$ is true so correctness in this case is the slightly simpler statement
 \[
 \forall SingleState; DoubleState; DoubleState'; DoubleInputs? @ R \land DoSomeDoubleBusiness \implies\\
 \t2  \exists SingleState'; SingleInputs? @ R' \land DoSomeBusiness
@@ -639,7 +655,7 @@ saccount' = saccount \cat < \lbind date \mapsto date?, description \mapsto descr
 \t2 account \mapsto account?, income \mapsto income?, expenditure \mapsto expenditure?  \rbind >\\
 \end{schema}
 
-and $DoSomeDoubleBusiness$ similarly has the simpler equivalent definition
+and $DoSomeDoubleBusiness$ similarly has the simpler equivalent definition (note, however, the extra conditions here to make sure that the inputs are following the rules for double-entry, as given in $DoubleTransaction$)
 
 \begin{schema}{DoSomeDoubleBusiness}
 \Delta DoubleState\\
@@ -649,6 +665,9 @@ daccount1?, dacount2? : ACCOUNT\\
 debit1?, debit2? : MONEY\\
 credit1?, credit2? : MONEY
 \where
+(debit1? = credit2? \land debit2? = credit1? = blank)\\
+\lor\\
+(debit2? = credit1? \land debit1? = credit2? = blank)\\
 daccount' = daccount \cat \\
 \t1 < \lbind ddate \mapsto ddate?, ddescription \mapsto ddescription?, \\
 \t3 daccount1 \mapsto daccount1?, daccount2 \mapsto daccount2?, debit1 \mapsto debit1?, \\
@@ -676,6 +695,9 @@ which is the predicate
       \t1  saccount(i).account = daccount(i).account1 = daccount(i).account2 \land\\
        \t1 saccount(i).income = daccount(i).debit2 \land\\
        \t1 saccount(i).expenditure = daccount(i).credit1 ) ) \land\\
+(debit1? = credit2? \land debit2? = credit1? = blank)\\
+\lor\\
+(debit2? = credit1? \land debit1? = credit2? = blank) \land \\
 daccount' = daccount \cat \\
 \t2 < \lbind ddate \mapsto ddate?, ddescription \mapsto ddescription?, \\
 \t3 daccount1 \mapsto daccount1?, daccount2 \mapsto daccount2?, debit1 \mapsto debit1?, \\
@@ -684,7 +706,7 @@ daccount' = daccount \cat \\
 \exists saccount' : \seq Transaction; d : DATE; desc : TEXT; a : ACCOUNT; i, e : MONEY @ \\
 \# saccount' = \# daccount' \land \\
 (\forall i : \dom saccount' @\\
-( \t1 saccount'(i).date = daccount'(i).ddate \land\\
+\t1 (saccount'(i).date = daccount'(i).ddate \land\\
        \t1 saccount'(i).description = daccount'(i).ddescription \land\\
        \t1 saccount'(i).account = daccount'(i).account1 = daccount'(i).account2 \land\\
        \t1 saccount'(i).income = daccount'(i).debit2 \land\\
@@ -693,17 +715,18 @@ saccount' = saccount \cat < \lbind date \mapsto date?, description \mapsto descr
 \t2 account \mapsto account?, income \mapsto income?, expenditure \mapsto expenditure?  \rbind >
 \]
 
-The antecedent tells us that the two sequences $saccount'$ and $daccount'$ have the relationship required in the consequent for all elements their beginning up to the length of $saccount$. Also, given that the lengths of the two sequences $saccount$ and $daccount$ are given as equal in the antecedent, and given that $saccount'$ and $daccount'$ are both just one elements longer than $saccount$ and $daccount$, it follows that $saccount'$ and $daccount'$ have the same length. Then all that is left to prove is that the two new elements added to the two sequences have the correct relationship, i.e. that
+The antecedent tells us that the two sequences $saccount'$ and $daccount'$ have the relationship required in the consequent for all elements from their beginnings up to the length of $saccount$. Also, given that the lengths of the two sequences $saccount$ and $daccount$ are given as equal in the antecedent, and given that $saccount'$ and $daccount'$ are both just one element longer than $saccount$ and $daccount$, it follows that $saccount'$ and $daccount'$ have the same length. Then all that is left to prove is that the two new elements added to the two sequences have the correct relationship, i.e. that
 \[
 \forall ddate? : DATE; ddescription? : TEXT; daccount1?, daccount2? : ACCOUNT;\\
  debit1?, debit2? : MONEY; credit1?, credit2? : MONEY @\\
  \t2 \exists d : DATE; desc : TEXT; a : ACCOUNT; i, e : MONEY @ \\
 \t3 date? = ddate? \land description? = ddescription? \land \\
-\t3 account? = account1? = account2? \land \\
+\t3 account? = daccount1? = daccount2? \land \\
 \t3 income? = debit2? \land expenditure? = credit1?
 \]
 
-and this follows from several uses of the one-point rule.
+and this follows from several uses of the one-point rule, BUT ONLY WHEN $daccount1? = daccount2?$, so this has to be added to the antecedent in order for the proof to be possible. (This is a nice little example where actually DOING the proof shows something wrong in the originally, apparently entirely reasonable, formalisation!) Formally we handle this by adding the inputs to the declaration part of $R$ and the condition $daccount1? = daccount2?$ to its predicate part.
+
 
 Hence we have shown that double-entry accounting is a refinement of single-entry accounting.
 

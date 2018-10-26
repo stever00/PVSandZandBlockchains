@@ -1,0 +1,20 @@
+(accounting
+ (one_point 0
+  (one_point-1 nil 3749544765 ("" (grind) nil nil)
+   ((DATE type-decl nil accounting nil)
+    (ACCOUNT type-decl nil accounting nil)
+    (TEXT type-decl nil accounting nil)
+    (MONEY type-decl nil accounting nil)
+    (TType type-eq-decl nil accounting nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (= const-decl "[T, T -> boolean]" equalities nil)
+    (Transaction type-eq-decl nil accounting nil)
+    (finseq type-eq-decl nil finite_sequences nil)
+    (DSB_Type type-eq-decl nil accounting nil)
+    (posint_plus_nnint_is_posint application-judgement "posint"
+     integers nil)
+    (singfs const-decl "finseq[T]" accounting nil)
+    (restrict const-decl "R" restrict nil)
+    (O const-decl "finseq" finite_sequences nil))
+   shostak)))
+

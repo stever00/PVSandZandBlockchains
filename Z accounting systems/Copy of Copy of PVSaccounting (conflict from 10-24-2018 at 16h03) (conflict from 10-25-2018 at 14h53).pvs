@@ -407,35 +407,40 @@ correctness : THEOREM
           ddate? : DATE, ddescription? : TEXT, daccount1?, daccount2? : ACCOUNT,
           debit1?, debit2? : MONEY, credit1?, credit2? : MONEY) :
 (
-(saccount`length = daccount`length AND 
- FORALL( i : below[saccount`length]) :
-         finseq_appl(saccount)(i)`date = finseq_appl(daccount)(i)`date AND
-         finseq_appl(saccount)(i)`description =  finseq_appl(daccount)(i)`description AND
-         finseq_appl(saccount)(i)`account =  finseq_appl(daccount)(i)`account1 AND
-	 finseq_appl(saccount)(i)`account =  finseq_appl(daccount)(i)`account2 AND
-         finseq_appl(saccount)(i)`income = finseq_appl(daccount)(i)`debit2 AND
-         finseq_appl(saccount)(i)`expenditure = finseq_appl(daccount)(i)`credit1 AND
-         daccount_ = o(daccount,singfs((# date := ddate?, description := ddescription?,
-                                          account1 := daccount1?, account2:= daccount2?,
-				          debit1 := debit1?, debit2:= debit2?,
-				          credit1 := credit1?, credit2 := credit2? #)))
+(saccount`length = daccount`length AND
+ daccount1? = daccount2? AND
+((debit1? = credit2? AND debit2? = credit1? = blank)
+OR
+(debit2? = credit1? \land debit1? = credit2? = blank)) AND
+ (FORALL (i : below[saccount`length]) :
+         (finseq_appl(saccount)(i)`date = finseq_appl(daccount)(i)`date AND
+          finseq_appl(saccount)(i)`description =  finseq_appl(daccount)(i)`description AND
+          finseq_appl(saccount)(i)`account =  finseq_appl(daccount)(i)`account1 AND
+	  finseq_appl(saccount)(i)`account =  finseq_appl(daccount)(i)`account2 AND
+          finseq_appl(saccount)(i)`income = finseq_appl(daccount)(i)`debit2 AND
+          finseq_appl(saccount)(i)`expenditure = finseq_appl(daccount)(i)`credit1)) AND
+	 
+daccount_ = o(daccount,singfs((# date := ddate?, description := ddescription?,
+                                 account1 := daccount1?, account2:= daccount1?,
+				 debit1 := debit1?, debit2:= debit2?,
+				 credit1 := credit1?, credit2 := credit2? #)))
 )
-
 IMPLIES
 (EXISTS (saccount_ : finseq[Transaction], date? : DATE, description? : TEXT, account? : ACCOUNT,
                                                                  income?, expenditure? : MONEY) :
-(saccount_`length = daccount_`length AND 
-FORALL (i : below[saccount_`length]) : 
-        finseq_appl(saccount_)(i)`date = finseq_appl(daccount_)(i)`date AND
-        finseq_appl(saccount_)(i)`description = finseq_appl(daccount_)(i)`description AND
-        finseq_appl(saccount_)(i)`account = finseq_appl(daccount_)(i)`account1 AND
-	finseq_appl(saccount_)(i)`account = finseq_appl(daccount_)(i)`account2 AND
-        finseq_appl(saccount_)(i)`income = finseq_appl(daccount_)(i)`debit2 AND
-        finseq_appl(saccount_)(i)`expenditure =finseq_appl(daccount_)(i)`credit1 AND
-        saccount_ = o(saccount, singfs((# date := date?, description := description?,
-                                          account := account?, income := income?,
-					  expenditure := expenditure? #)))
-)
+(saccount_`length = daccount_`length AND
+
+(FORALL (i : below[saccount_`length]) : 
+        (finseq_appl(saccount_)(i)`date = finseq_appl(daccount_)(i)`date AND
+         finseq_appl(saccount_)(i)`description = finseq_appl(daccount_)(i)`description AND
+         finseq_appl(saccount_)(i)`account = finseq_appl(daccount_)(i)`account1 AND
+	 finseq_appl(saccount_)(i)`account = finseq_appl(daccount_)(i)`account2 AND
+         finseq_appl(saccount_)(i)`income = finseq_appl(daccount_)(i)`debit2 AND
+         finseq_appl(saccount_)(i)`expenditure =finseq_appl(daccount_)(i)`credit1)) AND
+	
+saccount_ = o(saccount, singfs((# date := date?, description := description?,
+                                  account := account?, income := income?,
+			          expenditure := expenditure? #))))
 )
 )
 

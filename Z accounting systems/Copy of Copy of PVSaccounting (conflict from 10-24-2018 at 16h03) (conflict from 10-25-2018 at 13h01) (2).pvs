@@ -409,7 +409,7 @@ correctness : THEOREM
 (
 (saccount`length = daccount`length AND 
  FORALL( i : below[saccount`length]) :
-         finseq_appl(saccount)(i)`date = finseq_appl(daccount)(i)`date AND
+         (finseq_appl(saccount)(i)`date = finseq_appl(daccount)(i)`date AND
          finseq_appl(saccount)(i)`description =  finseq_appl(daccount)(i)`description AND
          finseq_appl(saccount)(i)`account =  finseq_appl(daccount)(i)`account1 AND
 	 finseq_appl(saccount)(i)`account =  finseq_appl(daccount)(i)`account2 AND
@@ -418,15 +418,14 @@ correctness : THEOREM
          daccount_ = o(daccount,singfs((# date := ddate?, description := ddescription?,
                                           account1 := daccount1?, account2:= daccount2?,
 				          debit1 := debit1?, debit2:= debit2?,
-				          credit1 := credit1?, credit2 := credit2? #)))
+				          credit1 := credit1?, credit2 := credit2? #))))
 )
-
 IMPLIES
 (EXISTS (saccount_ : finseq[Transaction], date? : DATE, description? : TEXT, account? : ACCOUNT,
                                                                  income?, expenditure? : MONEY) :
 (saccount_`length = daccount_`length AND 
 FORALL (i : below[saccount_`length]) : 
-        finseq_appl(saccount_)(i)`date = finseq_appl(daccount_)(i)`date AND
+        (finseq_appl(saccount_)(i)`date = finseq_appl(daccount_)(i)`date AND
         finseq_appl(saccount_)(i)`description = finseq_appl(daccount_)(i)`description AND
         finseq_appl(saccount_)(i)`account = finseq_appl(daccount_)(i)`account1 AND
 	finseq_appl(saccount_)(i)`account = finseq_appl(daccount_)(i)`account2 AND
@@ -434,7 +433,7 @@ FORALL (i : below[saccount_`length]) :
         finseq_appl(saccount_)(i)`expenditure =finseq_appl(daccount_)(i)`credit1 AND
         saccount_ = o(saccount, singfs((# date := date?, description := description?,
                                           account := account?, income := income?,
-					  expenditure := expenditure? #)))
+					  expenditure := expenditure? #))))
 )
 )
 )

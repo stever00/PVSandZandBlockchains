@@ -403,41 +403,33 @@ applicability: THEOREM
 % First to check...this is the predicate calculated in the "Z accounting" paper
 
 correctness : THEOREM
-  FORALL (saccount : finseq[Transaction], daccount, daccount_ : finseq[DoubleTransaction], 
+  FORALL (saccount : finseq[Transaction], daccount, daccoun_' : finseq[DoubleTransaction], 
           ddate? : DATE, ddescription? : TEXT, daccount1?, daccount2? : ACCOUNT,
           debit1?, debit2? : MONEY, credit1?, credit2? : MONEY) :
-(
-(saccount`length = daccount`length AND 
+ saccount`length = daccount`length AND 
  FORALL( i : below[saccount`length]) :
-         finseq_appl(saccount)(i)`date = finseq_appl(daccount)(i)`date AND
-         finseq_appl(saccount)(i)`description =  finseq_appl(daccount)(i)`description AND
-         finseq_appl(saccount)(i)`account =  finseq_appl(daccount)(i)`account1 AND
-	 finseq_appl(saccount)(i)`account =  finseq_appl(daccount)(i)`account2 AND
-         finseq_appl(saccount)(i)`income = finseq_appl(daccount)(i)`debit2 AND
-         finseq_appl(saccount)(i)`expenditure = finseq_appl(daccount)(i)`credit1 AND
-         daccount_ = o(daccount,singfs((# date := ddate?, description := ddescription?,
-                                          account1 := daccount1?, account2:= daccount2?,
-				          debit1 := debit1?, debit2:= debit2?,
-				          credit1 := credit1?, credit2 := credit2? #)))
-)
+         finseq_apply(saccount)(i)`date = finseq_apply(daccount)(i)`ddate AND
+         finseq_apply(saccount)(i)`description =  finseq_apply(daccount)(i)`ddescription AND
+         finseq_apply(saccount)(i)`account =  finseq_apply(daccount)(i)`account1 AND
+	 finseq_apply(saccount)(i)`account =  finseq_apply(daccount)(i)'account2 AND
+         finseq_apply(saccount)(i)`income = finseq_apply(daccount)(i)`debit2 AND
+         finseq_apply(saccount)(i)`expenditure = finseq_apply(daccount)(i)`credit1 AND
+         daccount' = daccount \cat \\
+\t2 < \lbind ddate \mapsto ddate?, ddescription \mapsto ddescription?, \\
+\t3 daccount1 \mapsto daccount1?, daccount2 \mapsto daccount2?, debit1 \mapsto debit1?, \\
+\t 4debit2 \mapsto debit2?, credit1 \mapsto credit1?, credit2 \mapsto credit2?  \rbind > \\
+\implies\\
+\exists saccount' : \seq Transaction; d : DATE; desc : TEXT; a : ACCOUNT; i, e : MONEY @ \\
+\# saccount' = \# daccount'\\
+      \forall i : \dom saccount' @\\
+( \t1 saccount'(i).date = daccount'(i).ddate \land\\
+       \t1 saccount'(i).description = daccount'(i).ddescription \land\\
+       \t1 saccount'(i).account = daccount'(i).account1 = daccount'(i).account2 \land\\
+       \t1 saccount'(i).income = daccount'(i).debit2 \land\\
+       \t1 saccount'(i).expenditure = daccount'(i).credit1 \land\\
+       \t1 saccount' = saccount \cat < \lbind date \mapsto date?, description \mapsto description?, \\
+\t2 account \mapsto account?, income \mapsto income?, expenditure \mapsto expenditure?  \rbind >
 
-IMPLIES
-(EXISTS (saccount_ : finseq[Transaction], date? : DATE, description? : TEXT, account? : ACCOUNT,
-                                                                 income?, expenditure? : MONEY) :
-(saccount_`length = daccount_`length AND 
-FORALL (i : below[saccount_`length]) : 
-        finseq_appl(saccount_)(i)`date = finseq_appl(daccount_)(i)`date AND
-        finseq_appl(saccount_)(i)`description = finseq_appl(daccount_)(i)`description AND
-        finseq_appl(saccount_)(i)`account = finseq_appl(daccount_)(i)`account1 AND
-	finseq_appl(saccount_)(i)`account = finseq_appl(daccount_)(i)`account2 AND
-        finseq_appl(saccount_)(i)`income = finseq_appl(daccount_)(i)`debit2 AND
-        finseq_appl(saccount_)(i)`expenditure =finseq_appl(daccount_)(i)`credit1 AND
-        saccount_ = o(saccount, singfs((# date := date?, description := description?,
-                                          account := account?, income := income?,
-					  expenditure := expenditure? #)))
-)
-)
-)
 
 
 % But then try for a more elegant solution with the explicit sets idea as above in R
