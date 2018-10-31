@@ -674,21 +674,24 @@ So, any states and inputs (of the correct types) with this combination are state
 The case for $DoSomeDoubleBusiness$ is similar, and we get that its precondition is 
 \[
 %daccount1? = daccount2? \land \\
-(debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
+((debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
 \lor\\
-(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)
+(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)) \land \\
+daccount \in \seq[DoubleTransaction]
 \]
 
 
 Applicability is then:
 \[
 \forall SingleState; DoubleState; Inputs @\\
-\t1 R \land ((income? = blank \land expenditure? \neq blank) \lor\\ 
-\t2   (income? \neq blank \land expenditure? = blank)) \implies \\
+\t1 R \land (((income? = blank \land expenditure? \neq blank) \lor\\ 
+\t2   (income? \neq blank \land expenditure? = blank)) \land \\
+\t2 saccount  \in \seq[Transaction]) \implies \\
 %\t4 daccount1? = daccount2? \land \\
-\t4 (debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
+\t4 ((debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
 \t4\lor\\
-\t4(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)
+\t4(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)) \land \\
+\t4daccount \in \seq[DoubleTransaction]
 \]
 
 \noindent which expands to the predicate:

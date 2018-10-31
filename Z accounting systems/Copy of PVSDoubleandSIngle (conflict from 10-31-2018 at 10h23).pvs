@@ -42,10 +42,10 @@ TType_ : TYPE = [# date_ : DATE,
 		   income_ : MONEY,
 		   expenditure_ : MONEY #]
 
-Transaction : TYPE = { t : TType | (t`income = blank AND t`expenditure /= blank) XOR
+Transaction : TYPE = { t : TType | (t`income = blank AND t`expenditure /= blank) OR
                                    (t`income /= blank AND t`expenditure = blank) }
 
-Transaction_ : TYPE = { t : TType_ | (t`income_  = blank AND t`expenditure_ /= blank) XOR
+Transaction_ : TYPE = { t : TType_ | (t`income_  = blank AND t`expenditure_ /= blank) OR
                                      (t`income_ /= blank AND t`expenditure_ = blank) }
 
 SingleState : TYPE = [# saccount :  finseq[Transaction] #]
@@ -140,13 +140,13 @@ DoubleTransactionType_ : TYPE = [# date_ : DATE,
 
 DoubleTransaction : TYPE = {dt : DoubleTransactionType |
                            (dt`debit1 = dt`credit2 AND dt`debit1 /= blank AND
-			    dt`debit2 = dt`credit1 AND dt`credit1 = blank) XOR
+			    dt`debit2 = dt`credit1 AND dt`credit1 = blank) OR
                            (dt`debit2 = dt`credit1 AND dt`debit2 /= blank AND
 			    dt`debit1 = dt`credit2 AND dt`credit2 = blank)}
 
 DoubleTransaction_ : TYPE = {dt : DoubleTransactionType_ |
                            (dt`debit1_ = dt`credit2_ AND dt`debit1_ /= blank AND
-			    dt`debit2_ = dt`credit1_ AND dt`credit1_ = blank) XOR
+			    dt`debit2_ = dt`credit1_ AND dt`credit1_ = blank) OR
                            (dt`debit2_ = dt`credit1_ AND dt`debit2_ /= blank AND
 			    dt`debit1_ = dt`credit2_ AND dt`credit2_ = blank)}
 
@@ -287,10 +287,10 @@ ConfInputs : TYPE = {i : ConfInputsType |  i`date? = i`ddate? AND
                                            i`description? = i`ddescription? AND
 					   i`account? = i`daccount1? AND
                                            i`account? = i`daccount2? AND
-					   i`income? = i`dcredit1? AND
+					   i`ddebit2? = i`dcredit1? AND
 					   i`income? =  i`ddebit2? AND 
 					   i`expenditure? = i`ddebit1? AND
-					   i`expenditure? = i`dcredit2?}
+					   i`ddebit1? = i`dcredit2?}
 
 % And now the standard Z obligations to show double is a refinement of single
 % Proved
@@ -310,30 +310,22 @@ applicability: THEOREM
 % Conformality of inputs
 (date? = ddate? AND description? = ddescription? AND
  account? = daccount1? AND account? = daccount2? AND
- income? = dcredit1? AND income? = ddebit2? AND
- expenditure? = ddebit1? AND expenditure? = dcredit2?
+ income? = dcredit1? AND income? = ddebit2? AND ddebit2? = dcredit1? AND
+ expenditure? = ddebit1? AND expenditure? = dcredit2? AND ddebit1? = dcredit2?
 )
 IMPLIES
 (     (R((# saccount := ss, daccount := ds #)) AND
            ((income? = blank AND expenditure? /= blank) OR
-	    (income? /= blank AND expenditure? = blank)) AND
-	    FORALL (i : below[ss`length]) : ((ss(i)`income = blank AND ss(i)`expenditure /= blank) XOR
-	                                     (ss(i)`income /= blank AND ss(i)`expenditure = blank)))
+	    (income? /= blank AND expenditure? = blank)))
       IMPLIES
            ((ddebit1? = blank AND dcredit2? = blank AND
-             ddebit2? /= blank AND dcredit1? /= blank AND ddebit2? = dcredit1?) XOR
+             ddebit2? /= blank AND dcredit1? /= blank AND ddebit2? = dcredit1?) OR
             (ddebit1? /= blank AND dcredit2? /= blank AND ddebit1? = dcredit2? AND
-             ddebit2? = blank AND dcredit1? = blank)) AND
-	     FORALL (i : below[ds`length]) : ((ds(i)`debit1 = blank AND ds(i)`credit2 = blank AND
-	                                       ds(i)`debit2 /= blank AND ds(i)`credit1 /= blank AND
-					       ds(i)`debit2 = ds(i)`credit1) XOR
-	                                      (ds(i)`debit1 /= blank AND ds(i)`credit2 /= blank AND
-					       ds(i)`debit1 = ds(i)`credit2 AND
-	                                       ds(i)`debit2 = blank AND ds(i)`credit1 = blank))
+             ddebit2? = blank AND dcredit1? = blank))
 )
                 
 % Finally we need correctness
-% Proved
+% 
 correctness : THEOREM
   FORALL (saccount : finseq[Transaction], daccount, daccount_ : finseq[DoubleTransaction], 
           date? : DATE, description? : TEXT, account? : ACCOUNT,income?, expenditure? : MONEY,
@@ -349,67 +341,32 @@ correctness : THEOREM
 IMPLIES
 (
  (
-% R
   R((# saccount := saccount, daccount := daccount #))
   AND
-% Pre AOp
   ((income? = blank AND expenditure? /= blank) XOR
    (income? /= blank AND expenditure? = blank))
   AND
-  (FORALL (i : below[saccount`length]) :
-          ((saccount(i)`income = blank AND saccount(i)`expenditure /= blank) XOR
-	   (saccount(i)`income /= blank AND saccount(i)`expenditure = blank))
-  )	   
-  AND
-% COp
   ((ddebit1? = blank AND dcredit2? = blank AND
     ddebit2? /= blank AND dcredit1? /= blank AND ddebit2? = dcredit1?) XOR
    (ddebit1? /= blank AND dcredit2? /= blank AND ddebit1? = dcredit2? AND
     ddebit2? = blank AND dcredit1? = blank))
   AND
-  (FORALL (i : below[daccount`length]) : ((daccount(i)`debit1 = blank AND daccount(i)`credit2 = blank AND
-	                                   daccount(i)`debit2 /= blank AND daccount(i)`credit1 /= blank AND
-					   daccount(i)`debit2 = daccount(i)`credit1) XOR
-	                                  (daccount(i)`debit1 /= blank AND daccount(i)`credit2 /= blank AND
-					   daccount(i)`debit1 = daccount(i)`credit2 AND
-	                                   daccount(i)`debit2 = blank AND daccount(i)`credit1 = blank))
-  )
-  AND
-  (FORALL (i : below[daccount_`length]) : ((daccount_(i)`debit1 = blank AND daccount_(i)`credit2 = blank AND
-	                                      daccount_(i)`debit2 /= blank AND daccount_(i)`credit1 /= blank AND
-					      daccount_(i)`debit2 = daccount_(i)`credit1) XOR
-	                                     (daccount_(i)`debit1 /= blank AND daccount_(i)`credit2 /= blank AND
-					      daccount_(i)`debit1 = daccount_(i)`credit2 AND
-  	                                      daccount_(i)`debit2 = blank AND daccount_(i)`credit1 = blank))
-  )
-  AND
-  daccount_ = o(daccount,singfs((# date := ddate?, description := ddescription?,
-                                      account1 := daccount1?, account2 := daccount2?,
-				      debit1 := ddebit1?, debit2 := ddebit2?,
-				      credit1 := dcredit1?, credit2 := dcredit2? #)))
+   daccount_ = o(daccount,singfs((# date := ddate?, description := ddescription?,
+                                    account1 := daccount1?, account2 := daccount2?,
+				    debit1 := ddebit1?, debit2 := ddebit2?,
+				    credit1 := dcredit1?, credit2 := dcredit2? #)))
   )
  IMPLIES
  (EXISTS (saccount_ : finseq[Transaction]) :
    (
-% AOp
     ((income? = blank AND expenditure? /= blank) XOR
-     (income? /= blank AND expenditure? = blank)) AND
-    (FORALL (i : below[saccount`length]) :
-          ((saccount(i)`income = blank AND saccount(i)`expenditure /= blank) XOR
-	   (saccount(i)`income /= blank AND saccount(i)`expenditure = blank))
-    )
-    AND
-    (FORALL (i : below[saccount_`length]) :
-          ((saccount_(i)`income = blank AND saccount_(i)`expenditure /= blank) XOR
-	   (saccount_(i)`income /= blank AND saccount_(i)`expenditure = blank))
-    )
-    AND
+     (income? /= blank AND expenditure? = blank))
+  AND
     saccount_ = o(saccount, singfs((# date := date?, description := description?,
                                       account := account?, income := income?,
 			              expenditure := expenditure? #)))
-    AND
-% R
-    R((# saccount := saccount_, daccount := daccount_ #))
+%    AND				  
+%    R((# saccount := saccount_, daccount := daccount_ #))
    )
  )
 )
