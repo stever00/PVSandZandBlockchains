@@ -308,7 +308,11 @@ amount' = amount?
 DoSomeBusiness_1 \defs \exists Transaction_1' @ \Phi DoSomeBusiness \land New Transaction_1
 \]
 
-Finally, again as in the previous section, we introduce the separation of $amount$ to give
+Finally, again as in the previous section, we introduce the separation of $amount$ to give (and note now that we don't need negative amounts of money to be representable since we have the two ways of recording an amount as either income or expenditure, but we do need a ``blank" amount of money, and exactly one amount has to be blank in each transaction)
+
+\begin{axdef}
+blank : MONEY
+\end{axdef}
 
 \begin{schema}{Transaction}
 date : DATE\\
@@ -316,6 +320,10 @@ description : TEXT\\
 account : ACCOUNT\\
 income : MONEY\\
 expenditure : MONEY
+\where
+(income = blank \land expenditure \neq blank) \\
+\lor\\
+(income \neq blank \land expenditure = blank)
 \end{schema}
 
 which flows on to give
@@ -339,7 +347,7 @@ expenditure' = expenditure?
 DoSomeBusiness \defs \exists Transaction' @ \Phi DoSomeBusiness \land NewTransaction
 \]
 
-and $SingleState$ has the obvious definition in terms of this final form for $Transaction$.
+\noindent and $SingleState$ has the obvious definition in terms of this final form for $Transaction$.
 
 
 (Predicates we might want...keep track of totals amount in and out to make sure it's never below zero? Constrain $account$ to always be the same (our only) account name? 
@@ -348,66 +356,9 @@ Also operations like "what is my total balance?" and "compile a report for the m
 
 \subsection{Double-entry accounting}
 
-Double---some schema calculus with the single version
+We aim to formalise the double-entry system in the same way as we have done for single-entry, and then show (as the tables above suggest) that every single-entry transaction and be made more concrete (refined to) a double-entry one. The various operations will follow the same pattern and the usual Z refinement properties will be proved. 
 
-But also, some refinement.
-
-It looks to me like single can be refined to double.
-
-Very clear from the tables in the first section. The first transaction in the single system
-
- \begin{table}[h]
-\begin{center}
-\begin{tabular}{|c|c|c|c|c|}
-Date & Description & Account & Income & Expenditure \\
-\hline \hline
-1st January 2017 & Sold Tissot watch & Capital & \$250.00 & \\
-\end{tabular}
-\end{center}
-\label{default}
-\end{table}%
-
-can first be rewritten as
-
-\begin{table}[h]
-\begin{center}
-\begin{tabular}{|c|c|c|c|c|}
-Date & Description & Account & Income & Expenditure\\
-\hline \hline
-1st January 2017 & Sold Tissot watch & Capital &   &\$250.00 \\
-\hline
-& &  Capital & \$250.00 &  \\
-\end{tabular}
-\end{center}
-\label{default}
-\end{table}%
-
-which is simply related to
-
-\begin{table}[h]
-\begin{center}
-\begin{tabular}{|c|c|c|c|c|}
-Date & Description & Account & Debit & Credit\\
-\hline \hline
-1st January 2017 & Sold Tissot watch & Capital &   &\$250.00 \\
-\hline
-& &  Capital & \$250.00 &  \\
-\end{tabular}
-\end{center}
-\label{default}
-\end{table}%
-
-\newpage
-
-
-
-We aim to formalise the double-entry system in the same way as we have done for single-entry, and then show (as the tables above suggest) that every single-entry transaction and be made more concrete (refined to) a double-entry one. The various operations will follow the same pattern and the usual Z refinement properties will be proved.
-
-First we define what a double-entry transaction looks like and, as before, what a double-entry state is. And we need to know that there is a special sort of money amount, the blank sort.
-
-\begin{axdef}
-blank : MONEY
-\end{axdef}
+First we define what a double-entry transaction looks like and, as before, what a double-entry state is.  
 
 \begin{schema}{DoubleTransaction}
 ddate : DATE\\
@@ -415,9 +366,9 @@ ddescription : TEXT\\
 account1, account2 : ACCOUNT\\
 debit1, debit2, credit1, credit2 : MONEY
 \where
-(debit1 = credit2 \land debit2 = credit1 = blank)\\
+(debit1 = credit2 \neq blank \land debit2 = credit1 = blank)\\
 \lor\\
-(debit2 = credit1 \land debit2 = credit1 = blank)
+(debit2 = credit1 \neq blank \land debit1 = credit2 = blank) 
 \end{schema}
 
 \begin{zed}
@@ -436,19 +387,41 @@ daccount = < >
 DoubleTransaction'\\
 ddate? : DATE\\
 ddescription? : TEXT\\
-daccount1?, dacount2? : ACCOUNT\\ 
+daccount1?, daccount2? : ACCOUNT\\ 
 debit1?, debit2? : MONEY\\
 credit1?, credit2? : MONEY
 \where
 ddate' = ddate?\\
 ddescription' = ddescription?\\
-daccount1' = daccount1?\\
-daccount2' = daccount2?\\
+account1' = daccount1?\\
+account2' = daccount2?\\
 debit1' = debit1?\\
 debit2' = debit2?\\
 credit1' = credit1?\\
 credit2' = credit2?
 \end{schema}
+
+% **** This is no longer needed since I realised that the conformal inputs take care fo this!!!!****
+%Note that we have in fact to specialise the idea of a transaction in the double-entry case because, in general, any two accounts can be involved, but in our claimed refinement we need the extra condition that the two accounts in the double-entry transaction are the same in order to model the single entry case. (See the examples above to see this in action.) So, just for our modelling case we have to make the following special case definition for subsequent use:
+%
+%\begin{schema}{DoubleNewTransaction_S}
+%DoubleTransaction'\\
+%ddate? : DATE\\
+%ddescription? : TEXT\\
+%daccount1?, daccount2? : ACCOUNT\\ 
+%debit1?, debit2? : MONEY\\
+%credit1?, credit2? : MONEY
+%\where
+%daccount1? = daccount2?\\
+%ddate' = ddate?\\
+%ddescription' = ddescription?\\
+%daccount1' = daccount1?\\
+%daccount2' = daccount2?\\
+%debit1' = debit1?\\
+%debit2' = debit2?\\
+%credit1' = credit1?\\
+%credit2' = credit2?
+%\end{schema}
 
 \begin{schema}{\Phi DoSomeDoubleBusiness}
 \Delta DoubleState\\
@@ -461,6 +434,81 @@ daccount' = daccount \cat < \theta DoubleTransaction' >
 DoSomeDoubleBusiness \defs \exists DoubleTransaction' @ \Phi DoSomeDoubleBusiness \land\\
 \t14 DoubleNewTransaction
 \]
+
+\subsection{Relating single and double}
+
+Consider the tables in the first section. The first transaction in the single system
+
+%\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+Date & Description & Account & Income & Expenditure \\
+\hline \hline
+1st January 2017 & Sold Tissot watch & Capital & \$250.00 & \\
+\end{tabular}
+\end{center}
+\label{default}
+%\end{table}%
+
+can first be rewritten as
+
+%\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+Date & Description & Account & Income & Expenditure\\
+\hline \hline
+1st January 2017 & Sold Tissot watch & Capital &   &\$250.00 \\
+\hline
+& &  Capital & \$250.00 &  \\
+\end{tabular}
+\end{center}
+\label{default}
+%\end{table}%
+
+which is simply related to
+
+%\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+Date & Description & Account & Debit & Credit\\
+\hline \hline
+1st January 2017 & Sold Tissot watch & Capital &   &\$250.00 \\
+\hline
+& &  Capital & \$250.00 &  \\
+\end{tabular}
+\end{center}
+\label{default}
+%\end{table}%
+
+If we consider the can of oil too (where capital decreases because we spend it to buy the oil) then we can simply record as we have in the case above. This means recording negative amounts in the two transactions. In a sense, one of the points of double-entry book keeping, though, is that all the amounts recorded are positive. To move to only positive amounts being recorded, but with the information about what amounts were originally negative, we can employ a convention: that a single-entry positive amount is represented as above for the watch; a single-entry negative amount is represented with the transactions in the opposite order, so we would have
+
+%\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+Date & Description & Account & Income & Expenditure \\
+\hline \hline
+3rd March 2017 & Bought can of oil & Capital &  & \$40.00 \\
+\end{tabular}
+\end{center}
+\label{default}
+%\end{table}%
+
+represented under the convention by
+
+%\begin{table}[h]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+Date & Description & Account & Debit & Credit\\
+\hline \hline
+3rd March 2017 & Bought can of oil  & Capital & \$40  &  \\
+\hline
+& &  Capital &  & \$40 \\
+\end{tabular}
+\end{center}
+\label{default}
+%\end{table}%
+
+thus avoiding use of negative amounts but making it ``clear" what the original information was.
 
 Now, since we have different state space we need to invoke the rules for data refinement (in a Z setting) and to do that we need to say how the two state spaces are related. Here, at last, is where we formalise the picture suggested by the tables above.
 
@@ -475,20 +523,44 @@ DoubleState
 saccount(i).date = daccount(i).ddate \land\\
 saccount(i).description = daccount(i).ddescription \land\\
 saccount(i).account = daccount(i).account1 = daccount(i).account2 \land\\
-saccount(i).income = daccount(i).debit2 \land\\
-saccount(i).expenditure = daccount(i).credit1)
+saccount(i).income = daccount(i).debit2  = daccount(i).credit1 \land\\
+saccount(i).expenditure = daccount(i).credit2 = daccount(i).debit1)
 \end{schema}
 
-Then we need to show that the refinement rules hold for any single-entry operation and the  corresponding double-entry operation. The rules are standard (see Derrick and Boiten, for example) and state that for any two state spaces $AState$ and $CState$ connected by a relation given by a schema $R$, for any corresponding operation schemas $AOp$ and $COp$ the following must hold:\\
+Then we need to show that the refinement rules hold for any single-entry operation and the  corresponding double-entry operation. The rules are standard (see Derrick and Boiten, for example). We have to take note of the fact that for the Derrick and Boiten predicates they have assumed that the operations are conformal in their inputs, which means that they (at least) have the same number of inputs and the inputs can be ``paired"---essentially we have to think of the inputs in the abstract and concrete versions of any operation we are dealing with as being indexed. We can deal with this by the (somewhat artificial) device of putting all the inputs from the two operations together and letting each operation take all the inputs---and of course each will ignore some of those inputs if they ``came from" the other operation originally. This also needs that the various equalities between the inputs are in the predicate part so that they are enforced. 
+
+This explains why, in what follows, there is only (apparently) one type of input mentioned ($AOp?$ is the inputs to the abstract operation, but because these are also the inputs to the concrete operation we can see that in fact ALL inputs are mentioned). To this end we define a schema that contains all the possible inputs as observations for use in what follows:
+
+\begin{schema}{Inputs}
+ddate? : DATE\\
+ddescription? : TEXT\\
+daccount1?, daccount2? : ACCOUNT\\ 
+debit1?, debit2? : MONEY\\
+credit1?, credit2? : MONEY\\
+date? : DATE\\
+description? : TEXT\\
+account? : ACCOUNT\\ 
+income? : MONEY\\
+expenditure? : MONEY
+\where
+date? = ddate? \\
+description? = ddescription?\\
+account? = daccount1? = daccount2?\\
+income? = debit2? = credit1?\\
+expenditure? = debit1? = credit2?
+%\lor  ((expenditure? = debit1? = credit2? \neq blank \land income? = debit2? = credit1? = blank))
+\end{schema}
+
+The rules state that for any two state spaces $AState$ and $CState$ connected by a relation given by a schema $R$, for any corresponding operation schemas $AOp$ and $COp$ with inputs $AOp?$ the following must hold:\\
 
 \noindent Applicability:
 \[
-\forall AState; CState @ \pre AOp \land R \implies \pre COp
+\forall AState; CState; AOp? @ \pre AOp \land R \implies \pre COp
 \]
 
 \noindent Correctness:
 \[
-\forall AState; CState; CState' @ \pre AOp \land R \land COp \implies \exists AState' @ R' \land AOp
+\forall AState; CState; CState'; AOp? @ \pre AOp \land R \land COp \implies \exists AState' @ R' \land AOp
 \]
 
 \noindent and also that there must be corresponding initial states\\
@@ -508,7 +580,7 @@ Unpacking definitions gives the obligation:
 
 \[
 \forall daccount : \seq DoubleTransaction @ daccount = < > \implies\\
-\t5 \exists saccount : \seq SingleTransaction @ saccount = < > and \land R
+\t5 \exists saccount : \seq SingleTransaction @ saccount = < >  \land R
 \]
 
 We can use the one-point rule on both
@@ -533,36 +605,36 @@ DoubleState
 saccount(i).date = daccount(i).ddate \land\\
 saccount(i).description = daccount(i).ddescription \land\\
 saccount(i).account = daccount(i).account1 = daccount(i).account2 \land\\
-saccount(i).income = daccount(i).debit2 \land\\
-saccount(i).expenditure = daccount(i).credit1)
+saccount(i).income = daccount(i).debit2  = daccount(i).credit1 \land\\
+saccount(i).expenditure = daccount(i).credit2 = daccount(i).debit1)
 \end{schema}
 
-and here the first line is clearly true, and the large universally-quantified predicate is vacuously true. So, initialisation for our system holds.
+\noindent and here the first line is clearly true, and the large universally-quantified predicate is vacuously true. So, initialisation for our system holds.
 
 Next we consider the operations $DoSomeBusiness$ and $DoSomeDoubleBusiness$, which give rise to the obligations of having to prove:
 
 \noindent Applicability:
 \[
-\forall AState; CState @ \pre AOp \land R \implies \pre COp
+\forall AState; CState; AOp? @ \pre AOp \land R \implies \pre COp
 \]
 
-% *****Need to check this placing and quantifying of the AInputs? with erik and derrick
 \noindent Correctness:
 \[
-\forall AState; CState; CState'; CInputs? @ \pre AOp \land R \land COp \implies \exists AState'; AInputs? @ R' \land AOp
+\forall AState; CState; CState'; AOp? @ \pre AOp \land R \land COp \implies \exists AState' @ R' \land AOp
 \]
 
-which by substitution specialise to:
+By substitution the required predicates specialise to:\\
 
 \noindent Applicability:
 \[
-\forall SingleState; DoubleState @ \pre DoSomeBusiness \land R \implies \pre DoSomeDoubleBusiness
+\forall SingleState; DoubleState; Inputs @\\
+\t4 \pre DoSomeBusiness \land R \implies \pre DoSomeDoubleBusiness
 \]
-
 \noindent Correctness:
 \[
-\forall SingleState; DoubleState; DoubleState'; DoubleInputs?@ \pre DoSomeBusiness \land R \land\\
- \t6 DoSomeDoubleBusiness \implies \exists SingleState'; SingleInputs?  @ R' \land DoSomeBusiness
+\forall SingleState; DoubleState; DoubleState'; Inputs @\\
+\t4  \pre DoSomeBusiness \land R \land DoSomeDoubleBusiness \implies \\
+\t6 \exists SingleState' @ R' \land DoSomeBusiness
 \]
 
 We consider Applicability.
@@ -572,7 +644,7 @@ We need the preconditions for $DoSomeBusiness$ and $DoSomeDoubleBusiness$ first.
 \pre DoSomeBusiness = \exists SingleState' @ (\exists Transaction' @ \Phi DoSomeBusiness \land NewTransaction)
 \]
 which is
-\begin{schema} { }
+\begin{schema} {}
 SingleState\\
 date? : DATE\\
 description? : TEXT\\
@@ -587,21 +659,65 @@ expenditure? : MONEY
             a= account? \land \\
             i = income? \land \\
             e = expenditure? \land \\
-            sacc = saccount \cat <  >)
+            ((i = blank \land e \neq blank) \lor\\ (i \neq blank \land e = blank)) \land\\
+            sacc = saccount \cat < \theta Transaction' > )
 \end{schema}
-\noindent and by using the one-point rule on all the existential quantifications here we can see that the predicate part is just $true$. So, and state and inputs (of the corrects types) are states we can start from, do the $DoSomeBusiness$ operation and be sure of ending in a valid state (i.e. the precondition of the operation is true). Applicability is then the trivial:
+\noindent and by using the one-point rule on all the existential quantifications here we can see that the predicate part is just $(income?= blank \land expenditure? \neq blank) \lor\\ (income? \neq blank \land expenditure? = blank)$. So, any states and inputs (of the correct types) with this combination are states we can start from, do the $DoSomeBusiness$ operation and be sure of ending in a valid state.
+
+The case for $DoSomeDoubleBusiness$ is similar, and we get that its precondition is 
 \[
-\forall SingleState; DoubleState @ true \land R \implies true
+%daccount1? = daccount2? \land \\
+(debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
+\lor\\
+(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)
 \]
 
-Finally correctness. As we same, the precondition for $DoSomeBusiness$ is true so correctness in this case is the slightly simpler statement
+
+Applicability is then:
 \[
-\forall SingleState; DoubleState; DoubleState'; DoubleInputs? @ R \land DoSomeDoubleBusiness \implies\\
-\t2  \exists SingleState'; SingleInputs? @ R' \land DoSomeBusiness
+\forall SingleState; DoubleState; Inputs @\\
+\t1 R \land ((income? = blank \land expenditure? \neq blank) \lor\\ 
+\t2   (income? \neq blank \land expenditure? = blank)) \implies \\
+%\t4 daccount1? = daccount2? \land \\
+\t4 (debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
+\t4\lor\\
+\t4(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)
 \]
 
-To make clearer progress here we look at what, in their simplest terms, the schemas $DoSomeBusiness$ and $DoSomeDoubleBusiness$ are. We have
+\noindent which expands to the predicate:
+\[
+\forall saccount : \seq Transaction; daccount:  \seq DoubleTransaction; \\
+ddate? : DATE; ddescription? : TEXT daccount1?,daccount2? : ACCOUNT;\\
+debit1?,debit2? : MONEY credit1?,credit2? : MONEY;\\
+date? : DATE; description? : TEXT; account? : ACCOUNT; income? : MONEY; \\
+expenditure? : MONEY @ \\
+date? = ddate? \land description? = ddescription? \land account? = daccount1? = daccount2? \land \\
+income? = debit2? = credit1? \land expenditure? = debit1? = credit2? \\
+%\lor ((expenditure? = debit1? = credit2? \neq blank \land income? = debit2? = credit1? = blank))\\
+ \implies \\
+\t1  (R \land (income?= blank \land expenditure? \neq blank) \lor\\ 
+                  \t2 (income? \neq blank \land expenditure? = blank))\\
+\t1 \implies\\
+(debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
+\t4\lor\\
+\t1(debit2? = credit1? \neq blank \land debit1? = credit2? = blank))
+\]
+which is clearly true.
 
+Finally correctness. As we saw, the precondition for $DoSomeBusiness$ is
+\[
+(income?= blank \land expenditure? \neq blank) \lor (income? \neq blank \land expenditure? = blank)
+\]
+so correctness in this case is the statement:
+\[
+\forall SingleState; DoubleState; DoubleState'; Inputs @ \\
+\t1 R \land \\
+\t1 (income?= blank \land expenditure? \neq blank) \lor (income? \neq blank \land expenditure? = blank)\\
+\t1 \land DoSomeDoubleBusiness \implies\\
+\t3 \exists SingleState' @ R' \land DoSomeBusiness
+\]
+
+To make clearer progress here we look at what, in their ``lowest" terms, the schemas $DoSomeBusiness$ and $DoSomeDoubleBusiness$ are. 
 \[
 DoSomeBusiness \defs \exists Transaction' @ \Phi DoSomeBusiness \land NewTransaction
 \]
@@ -622,7 +738,9 @@ expenditure? : MONEY
 \t2 desc = description?\\
 \t2 a = account?\\
 \t2 i= income?\\
-\t2 e = expenditure?
+\t2 e = expenditure?\\
+\t2((i = blank \land e \neq blank) \lor\\
+\t2 (i \neq blank \land e = blank))
 \end{schema}
 
 which by use of the one-point rule gives the simpler equivalent definition of
@@ -635,11 +753,12 @@ account? : ACCOUNT\\
 income? : MONEY\\
 expenditure? : MONEY
 \where
+((income? = blank \land expenditure? \neq blank) \lor\\ (income? \neq blank \land expenditure = blank)) \land\\
 saccount' = saccount \cat < \lbind date \mapsto date?, description \mapsto description?, \\
 \t2 account \mapsto account?, income \mapsto income?, expenditure \mapsto expenditure?  \rbind >\\
 \end{schema}
 
-and $DoSomeDoubleBusiness$ similarly has the simpler equivalent definition
+\indent and $DoSomeDoubleBusiness$ similarly has the simpler equivalent definition
 
 \begin{schema}{DoSomeDoubleBusiness}
 \Delta DoubleState\\
@@ -649,6 +768,9 @@ daccount1?, dacount2? : ACCOUNT\\
 debit1?, debit2? : MONEY\\
 credit1?, credit2? : MONEY
 \where
+(debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
+\lor\\
+(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)\\
 daccount' = daccount \cat \\
 \t1 < \lbind ddate \mapsto ddate?, ddescription \mapsto ddescription?, \\
 \t3 daccount1 \mapsto daccount1?, daccount2 \mapsto daccount2?, debit1 \mapsto debit1?, \\
@@ -657,53 +779,117 @@ daccount' = daccount \cat \\
 
 The original statement of correctness is equivalent to
 \[
-\forall saccount : \seq Transaction; daccount, daccount' : \seq DoubleTransaction; \\
-\t1 ddate? : DATE; ddescription? : TEXT; daccount1?, daccount2? : ACCOUNT; \\
-\t1 debit1?, debit2? : MONEY; credit1?, credit2? : MONEY@\\
-\t2 R \land DoSomeDoubleBusiness \implies\\
-\t3  \exists saccount' : \seq Transaction @ R' \land DoSomeBusiness
+\forall saccount : \seq Transaction; daccount:  \seq DoubleTransaction; \\
+ddate? : DATE; ddescription? : TEXT daccount1?,daccount2? : ACCOUNT;\\
+debit1?,debit2? : MONEY credit1?,credit2? : MONEY;\\
+date? : DATE; description? : TEXT; account? : ACCOUNT; income? : MONEY; \\
+expenditure? : MONEY @ \\
+date? = ddate? \land description? = ddescription? \land account? = daccount1? = daccount2? \land \\
+((income? = debit2? = credit1? \neq blank \land expenditure? = debit1? = credit2? = blank) \lor\\
+ ((expenditure? = debit1? = credit2? \neq blank \land income? = debit2? = credit1? = blank))\\
+\implies \\
+\t1 (R \land \\
+\t1 (income?= blank \land expenditure? \neq blank) \lor (income? \neq blank \land expenditure? = blank) \land\\
+ \t1 DoSomeDoubleBusiness \implies\\
+\t2  \exists saccount' : \seq Transaction @ R' \land DoSomeBusiness)
 \]
-
-which is the predicate
+\noindent which is the predicate
 \[
-\forall saccount : \seq Transaction; daccount, daccount' :  \seq DoubleTransaction; \\
-\t1 ddate? : DATE; ddescription? : TEXT; daccount1?, daccount2? : ACCOUNT; \\
-\t1 debit1?, debit2? : MONEY; credit1?, credit2? : MONEY @\\
-\# saccount = \# daccount \land \\
-(\forall i : \dom saccount @\\
- \t1 (saccount(i).date = daccount(i).ddate \land\\
-       \t1 saccount(i).description = daccount(i).ddescription \land\\
-      \t1  saccount(i).account = daccount(i).account1 = daccount(i).account2 \land\\
-       \t1 saccount(i).income = daccount(i).debit2 \land\\
-       \t1 saccount(i).expenditure = daccount(i).credit1 ) ) \land\\
-daccount' = daccount \cat \\
+\forall saccount : \seq Transaction; daccount:  \seq DoubleTransaction; \\
+ddate? : DATE; ddescription? : TEXT daccount1?,daccount2? : ACCOUNT;\\
+debit1?,debit2? : MONEY credit1?,credit2? : MONEY;\\
+date? : DATE; description? : TEXT; account? : ACCOUNT; income? : MONEY; \\
+expenditure? : MONEY @ \\
+date? = ddate? \land description? = ddescription? \land account? = daccount1? = daccount2? \land \\
+income? = debit2? = credit1? \land expenditure? = debit1? = credit2? \\
+\implies \\
+\t1 \# saccount = \# daccount \land \\
+\t1 (\forall i : \dom saccount @\\
+ \t2 (saccount(i).date = daccount(i).ddate \land\\
+       \t2 saccount(i).description = daccount(i).ddescription \land\\
+      \t2  saccount(i).account = daccount(i).account1 = daccount(i).account2 \land\\
+       \t2 saccount(i).income = daccount(i).debit2  = daccount(i).credit1 \land\\
+      \t2 saccount(i).expenditure = daccount(i).credit2 = daccount(i).debit1 ) \land\\
+\t1  (income?= blank \land expenditure? \neq blank) \lor (income? \neq blank \land expenditure? = blank) \land \\
+\t1((debit1? = credit2? \neq blank \land debit2? = credit1? = blank) \lor\\
+\t1(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)) \land\\
+\t1daccount' = daccount \cat \\
 \t2 < \lbind ddate \mapsto ddate?, ddescription \mapsto ddescription?, \\
 \t3 daccount1 \mapsto daccount1?, daccount2 \mapsto daccount2?, debit1 \mapsto debit1?, \\
 \t 4debit2 \mapsto debit2?, credit1 \mapsto credit1?, credit2 \mapsto credit2?  \rbind > \\
-\implies\\
-\exists saccount' : \seq Transaction; d : DATE; desc : TEXT; a : ACCOUNT; i, e : MONEY @ \\
-\# saccount' = \# daccount' \land \\
-(\forall i : \dom saccount' @\\
-( \t1 saccount'(i).date = daccount'(i).ddate \land\\
-       \t1 saccount'(i).description = daccount'(i).ddescription \land\\
-       \t1 saccount'(i).account = daccount'(i).account1 = daccount'(i).account2 \land\\
-       \t1 saccount'(i).income = daccount'(i).debit2 \land\\
-       \t1 saccount'(i).expenditure = daccount'(i).credit1)) \land\\
-saccount' = saccount \cat < \lbind date \mapsto date?, description \mapsto description?, \\
-\t2 account \mapsto account?, income \mapsto income?, expenditure \mapsto expenditure?  \rbind >
+\t1 \implies\\
+\t1 \exists saccount' : \seq Transaction @ \\
+\t1saccount' = saccount \cat < \lbind date \mapsto date?, description \mapsto description?, \\
+\t2 account \mapsto account?, income \mapsto income?, expenditure \mapsto expenditure?  \rbind >  \land \\
+\t1\# saccount' = \# daccount' \land \\
+\t1(\forall i : \dom saccount' @\\
+\t2 (saccount'(i).date = daccount'(i).ddate \land\\
+       \t3 saccount'(i).description = daccount'(i).ddescription \land\\
+       \t3 saccount'(i).account = daccount'(i).account1 = daccount'(i).account2 \land\\
+       \t3 saccount(i).income = daccount(i).debit2  = daccount(i).credit1 \land\\
+       \t3 saccount(i).expenditure = daccount(i).credit2 = daccount(i).debit1) 
 \]
 
-The antecedent tells us that the two sequences $saccount'$ and $daccount'$ have the relationship required in the consequent for all elements their beginning up to the length of $saccount$. Also, given that the lengths of the two sequences $saccount$ and $daccount$ are given as equal in the antecedent, and given that $saccount'$ and $daccount'$ are both just one elements longer than $saccount$ and $daccount$, it follows that $saccount'$ and $daccount'$ have the same length. Then all that is left to prove is that the two new elements added to the two sequences have the correct relationship, i.e. that
-\[
-\forall ddate? : DATE; ddescription? : TEXT; daccount1?, daccount2? : ACCOUNT;\\
- debit1?, debit2? : MONEY; credit1?, credit2? : MONEY @\\
- \t2 \exists d : DATE; desc : TEXT; a : ACCOUNT; i, e : MONEY @ \\
-\t3 date? = ddate? \land description? = ddescription? \land \\
-\t3 account? = account1? = account2? \land \\
-\t3 income? = debit2? \land expenditure? = credit1?
-\]
+%Again we now omit quantification over the inputs where those inputs do not appear, and switch the quantifier as we move it across the implication to get:
+%\[
+%\forall saccount : \seq Transaction; daccount, daccount' : \seq DoubleTransaction; \\
+%\t1expenditure? : MONEY; ddate? : DATE; ddescription? : TEXT \\
+%\t1 daccount1?, daccount2? : ACCOUNT;   \\
+%\t1 debit1?, debit2? : MONEY; credit1?, credit2? : MONEY;\\
+%\t1  income? : MONEY; expenditure? : MONEY@\\
+%\# saccount = \# daccount \land \\
+%(\forall i : \dom saccount @\\
+% \t1 (saccount(i).date = daccount(i).ddate \land\\
+%       \t1 saccount(i).description = daccount(i).ddescription \land\\
+%      \t1  saccount(i).account = daccount(i).account1 = daccount(i).account2 \land\\
+%       \t1 saccount(i).income = daccount(i).debit2 \land\\
+%       \t1 saccount(i).expenditure = daccount(i).credit1 ) ) \land\\
+%income? = expenditure?  \land \\
+%daccount1? = daccount2? \land \\
+%(debit1? = credit2? \land debit2? = credit1? = blank)\\
+%\lor\\
+%(debit2? = credit1? \land debit1? = credit2? = blank)\\ \land
+%daccount' = daccount \cat \\
+%\t2 < \lbind ddate \mapsto ddate?, ddescription \mapsto ddescription?, \\
+%\t3 daccount1 \mapsto daccount1?, daccount2 \mapsto daccount2?, debit1 \mapsto debit1?, \\
+%\t 4debit2 \mapsto debit2?, credit1 \mapsto credit1?, credit2 \mapsto credit2?  \rbind > \\
+%\implies\\
+%\exists saccount' : \seq Transaction; date? : DATE; description? : TEXT; \\ 
+%\t2 account? : ACCOUNT@ \\
+%\# saccount' = \# daccount' \land \\
+%(\forall i : \dom saccount' @\\
+%\t1 (saccount'(i).date = daccount'(i).ddate \land\\
+%       \t1 saccount'(i).description = daccount'(i).ddescription \land\\
+%       \t1 saccount'(i).account = daccount'(i).account1 = daccount'(i).account2 \land\\
+%       \t1 saccount'(i).income = daccount'(i).debit2 \land\\
+%       \t1 saccount'(i).expenditure = daccount'(i).credit1)) \land\\
+%saccount' = saccount \cat < \lbind date \mapsto date?, description \mapsto description?, \\
+%\t2 account \mapsto account?, income \mapsto income?, expenditure \mapsto expenditure?  \rbind >
+%\]
+%
 
-and this follows from several uses of the one-point rule.
+The inner antecedent tells us that the two sequences $saccount'$ and $daccount'$ have the relationship required in the consequent for all elements from their beginnings up to the length of $saccount$. Also, given that the lengths of the two sequences $saccount$ and $daccount$ are given as equal in the antecedent, and given that $saccount'$ and $daccount'$ are both just one element longer than $saccount$ and $daccount$, it follows that $saccount'$ and $daccount'$ have the same length. 
+
+Then all that is left to prove is that the two new elements added to the two new sequences have the correct relationship, and this follows from the predicates that give us conformality of inputs.
+
+%Then all that is left to prove is that the two new elements added to the two sequences have the correct relationship, i.e. that
+%\[
+%\forall saccount : \seq Transaction; daccount, daccount' : \seq DoubleTransaction; \\
+%\t1 date? : DATE; description? : TEXT; account? : ACCOUNT; income? : MONEY\\
+%\t1expenditure? : MONEY; ddate? : DATE; ddescription? : TEXT; \\
+%\t1 daccount1?, daccount2? : ACCOUNT; \\
+%\t1 debit1?, debit2? : MONEY; credit1?, credit2? : MONEY@\\
+%date? = ddate? \land description? = ddescription? \land daccount1? = daccount2? \land\\
+%((debit1? = credit2? \land debit2? = credit1? = blank) \lor\\
+%(debit2? = credit1? \land debit1? = credit2? = blank)) \\
+%\implies \\
+% \t2 \exists date? : DATE; description? : TEXT; account? : ACCOUNT @ \\
+%\t3 date? = ddate? \land description? = ddescription? \land \\
+%\t3 account? = daccount1? = daccount2? \land \\
+%\t3 income? = debit2? \land expenditure? = credit1?
+%\]
+%
+%and this follows from a cases analysis and several uses of the one-point rule.
 
 Hence we have shown that double-entry accounting is a refinement of single-entry accounting.
 
