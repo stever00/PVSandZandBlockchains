@@ -660,12 +660,12 @@ expenditure? : MONEY
             i = income? \land \\
             e = expenditure? \land \\
             ((i = blank \land e \neq blank) \lor\\ (i \neq blank \land e = blank)) \land\\
-            sacc = saccount \cat < \theta Transaction' > )
+            sacc = saccount\ \cat < \theta Transaction' > )
 \end{schema}
 \noindent and by using the one-point rule on all the existential quantifications here we can see that the predicate part is just
 \[
 ((income?= blank \land expenditure? \neq blank) \lor\\ (income? \neq blank \land expenditure? = blank)) \land \\ 
-saccount  \in \seq[Transaction]
+saccount\  \cat < \theta Transaction' >  \in \seq[Transaction]
 \] 
 (where the other requirements for expressions being from the relevant sets are trivially discharged). 
 
@@ -674,22 +674,28 @@ So, any states and inputs (of the correct types) with this combination are state
 The case for $DoSomeDoubleBusiness$ is similar, and we get that its precondition is 
 \[
 %daccount1? = daccount2? \land \\
-(debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
+((debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
 \lor\\
-(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)
+(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)) \land \\
+daccount\  \cat < \theta DoubleTransaction' >  \in \seq[DoubleTransaction]
 \]
 
 
 Applicability is then:
 \[
 \forall SingleState; DoubleState; Inputs @\\
-\t1 R \land ((income? = blank \land expenditure? \neq blank) \lor\\ 
-\t2   (income? \neq blank \land expenditure? = blank)) \implies \\
+\t1 R \land (((income? = blank \land expenditure? \neq blank) \lor\\ 
+\t2   (income? \neq blank \land expenditure? = blank)) \land \\
+\t2 saccount\  \cat < \theta Transaction' >\in \seq[Transaction]) \implies \\
 %\t4 daccount1? = daccount2? \land \\
-\t4 (debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
+\t4 ((debit1? = credit2? \neq blank \land debit2? = credit1? = blank)\\
 \t4\lor\\
-\t4(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)
+\t4(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)) \land \\
+\t4daccount\  \cat < \theta DoubleTransaction' > \in \seq[DoubleTransaction]
 \]
+
+%**********************Check from here....
+
 
 \noindent which expands to the predicate:
 \[
@@ -713,13 +719,15 @@ which is clearly true.
 
 Finally correctness. As we saw, the precondition for $DoSomeBusiness$ is
 \[
-(income?= blank \land expenditure? \neq blank) \lor (income? \neq blank \land expenditure? = blank)
-\]
+((income?= blank \land expenditure? \neq blank) \lor\\ (income? \neq blank \land expenditure? = blank)) \land \\ 
+saccount\  \cat < \theta Transaction' >  \in \seq[Transaction]
+\] 
 so correctness in this case is the statement:
 \[
 \forall SingleState; DoubleState; DoubleState'; Inputs @ \\
 \t1 R \land \\
-\t1 (income?= blank \land expenditure? \neq blank) \lor (income? \neq blank \land expenditure? = blank)\\
+((income?= blank \land expenditure? \neq blank) \lor\\ (income? \neq blank \land expenditure? = blank)) \land \\ 
+saccount\  \cat < \theta Transaction' >  \in \seq[Transaction]\\
 \t1 \land DoSomeDoubleBusiness \implies\\
 \t3 \exists SingleState' @ R' \land DoSomeBusiness
 \]
@@ -796,7 +804,9 @@ date? = ddate? \land description? = ddescription? \land account? = daccount1? = 
  ((expenditure? = debit1? = credit2? \neq blank \land income? = debit2? = credit1? = blank))\\
 \implies \\
 \t1 (R \land \\
-\t1 (income?= blank \land expenditure? \neq blank) \lor (income? \neq blank \land expenditure? = blank) \land\\
+\t1 ((income?= blank \land expenditure? \neq blank) \lor\\ 
+\t1(income? \neq blank \land expenditure? = blank)) \land \\ 
+\t1saccount\  \cat < \theta Transaction' >  \in \seq[Transaction] \land\\
  \t1 DoSomeDoubleBusiness \implies\\
 \t2  \exists saccount' : \seq Transaction @ R' \land DoSomeBusiness)
 \]
@@ -817,7 +827,9 @@ income? = debit2? = credit1? \land expenditure? = debit1? = credit2? \\
       \t2  saccount(i).account = daccount(i).account1 = daccount(i).account2 \land\\
        \t2 saccount(i).income = daccount(i).debit2  = daccount(i).credit1 \land\\
       \t2 saccount(i).expenditure = daccount(i).credit2 = daccount(i).debit1 ) \land\\
-\t1  (income?= blank \land expenditure? \neq blank) \lor (income? \neq blank \land expenditure? = blank) \land \\
+\t1 ((income?= blank \land expenditure? \neq blank) \lor\\ 
+\t1 (income? \neq blank \land expenditure? = blank)) \land \\ 
+\t1 saccount\  \cat < \theta Transaction' >  \in \seq[Transaction] \land \\
 \t1((debit1? = credit2? \neq blank \land debit2? = credit1? = blank) \lor\\
 \t1(debit2? = credit1? \neq blank \land debit1? = credit2? = blank)) \land\\
 \t1daccount' = daccount \cat \\

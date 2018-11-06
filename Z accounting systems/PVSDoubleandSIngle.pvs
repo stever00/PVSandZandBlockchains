@@ -7,7 +7,11 @@ BEGIN
 
 DATE, TEXT, ACCOUNT : TYPE
 
-MONEY : TYPE = {blank, one, two, three, four, five}
+MONEY : TYPE
+
+blank : MONEY
+
+% MONEY : TYPE = {blank, one, two, three, four, five}
 
 % We still have the basic idea of schemas a sets of bindings which turns up in PVS
 % models for schemas being sets of records.

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.1.18)  31 OCT 2018 11:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.1.18)  5 NOV 2018 12:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -639,28 +639,23 @@ Overfull \hbox (42.02249pt too wide) in alignment at lines 643--645
  []
 
 [11]
-Overfull \hbox (5.35634pt too wide) in alignment at lines 696--712
+Overfull \hbox (5.35634pt too wide) in alignment at lines 701--717
 [] 
  []
 
 [12]
-Overfull \hbox (21.39848pt too wide) in alignment at lines 720--726
-[] 
- []
-
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 5147) has occurred while \output is active []
 
  [13]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [14]
-Overfull \hbox (31.74011pt too wide) in alignment at lines 789--803
+Overfull \hbox (5.35634pt too wide) in alignment at lines 796--812
 [] 
  []
 
 
-Overfull \hbox (31.74011pt too wide) in alignment at lines 805--839
+Overfull \hbox (5.35634pt too wide) in alignment at lines 814--850
 [] 
  []
 
@@ -668,25 +663,25 @@ Overfull \hbox (31.74011pt too wide) in alignment at lines 805--839
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [15]
-Underfull \vbox (badness 1337) has occurred while \output is active []
+Underfull \vbox (badness 4492) has occurred while \output is active []
 
  [16]
-Overfull \hbox (1.35106pt too wide) in alignment at lines 972--974
+Overfull \hbox (1.35106pt too wide) in alignment at lines 983--985
 [] 
  []
 
 [17]
-Overfull \hbox (2.48433pt too wide) in alignment at lines 1013--1019
+Overfull \hbox (2.48433pt too wide) in alignment at lines 1024--1030
 [] 
  []
 
-
-Overfull \hbox (4.7672pt too wide) in paragraph at lines 1029--1030
+[18]
+Overfull \hbox (4.7672pt too wide) in paragraph at lines 1040--1041
 []\OT1/cmr/m/n/10.95 Here are the for-mal coun-ter-parts of those two com-po-ne
 nts for va-lid-ity for any blockchain
  []
 
-[18] [19] (./Z accounting.aux)
+[19] (./Z accounting.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -698,7 +693,7 @@ Here is how much of TeX's memory you used:
  7256 multiletter control sequences out of 15000+600000
  14596 words of font info for 57 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
- 42i,9n,35p,979b,241s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,9n,35p,979b,248s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx6.pfb><
 /usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></u
@@ -717,7 +712,7 @@ e/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive
 5/texmf-dist/fonts/type1/public/amsfonts/latxfont/lasy10.pfb></usr/local/texliv
 e/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/te
 xlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on "Z accounting.pdf" (19 pages, 236506 bytes).
+Output written on "Z accounting.pdf" (19 pages, 236860 bytes).
 PDF statistics:
  138 PDF objects out of 1000 (max. 8388607)
  98 compressed objects within 1 object stream
