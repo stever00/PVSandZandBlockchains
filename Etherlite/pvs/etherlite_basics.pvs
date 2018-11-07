@@ -1,4 +1,4 @@
-% Starting to use the language definiton to implement some of the rules
+% Starting to use the language definition to implement some of the rules
 % from the "Making Smart Contracts Smarter" paper
 
 etherlite_basics : THEORY

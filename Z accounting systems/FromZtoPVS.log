@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.1.18)  22 OCT 2018 12:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.1.18)  6 NOV 2018 16:24
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -575,45 +575,35 @@ File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 \makeMPintoPDFobject=\count111
 \everyMPtoPDFconversion=\toks28
 ) [1{/usr/local/texlive/2015/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-[2] [3]
-Overfull \hbox (13.30908pt too wide) in alignment at lines 146--150
+[2]
+Overfull \hbox (3.39651pt too wide) in alignment at lines 127--129
+[] 
+ []
+
+[3]
+Overfull \hbox (7.83408pt too wide) in alignment at lines 166--170
 [] 
  []
 
 
-Overfull \hbox (8.87633pt too wide) in alignment at lines 161--163
+Overfull \hbox (260.70616pt too wide) in alignment at lines 190--197
 [] 
  []
 
 [4]
-Overfull \hbox (59.05212pt too wide) in alignment at lines 207--215
+Overfull \hbox (83.90381pt too wide) in alignment at lines 225--234
 [] 
  []
 
-
-Overfull \hbox (6.52856pt too wide) in paragraph at lines 217--219
-[]\OT1/cmr/m/n/10.95 Of course, when we are do-ing Z we'd im-me-di-ately sim-pl
-ify the schema $\OT1/cmr/m/it/10.95 DoSomeBusiness[]$
- []
-
-
-Overfull \hbox (14.95406pt too wide) in alignment at lines 219--225
-[] 
- []
-
-
-Underfull \vbox (badness 2334) has occurred while \output is active []
-
- [5]
-[6] (./FromZtoPVS.aux) ) 
+[5] (./FromZtoPVS.aux) ) 
 Here is how much of TeX's memory you used:
  3986 strings out of 493089
  50558 string characters out of 6134842
- 127041 words of memory out of 5000000
+ 126041 words of memory out of 5000000
  7250 multiletter control sequences out of 15000+600000
  13358 words of font info for 53 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
- 42i,9n,35p,991b,214s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,9n,35p,1146b,214s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2015/texmf-dist/fonts/type1/public/
 amsfonts/cm/cmbx10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/a
 msfonts/cm/cmcsc10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/a
@@ -626,10 +616,10 @@ nts/cm/cmr8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts
 cmsy8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 ti10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbol
 s/msam10.pfb>
-Output written on FromZtoPVS.pdf (6 pages, 138481 bytes).
+Output written on FromZtoPVS.pdf (5 pages, 137850 bytes).
 PDF statistics:
- 67 PDF objects out of 1000 (max. 8388607)
- 47 compressed objects within 1 object stream
+ 64 PDF objects out of 1000 (max. 8388607)
+ 45 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

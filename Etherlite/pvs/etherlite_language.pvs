@@ -53,7 +53,7 @@ etherlite_language : THEORY
  END Code
 
 % Message is needed when considering *traces*, i.e. sequences of uses of a contract
-% Relevant to the "Finding The..." paper
+% Relevant to the "Finding The Greedy..." paper
  Message : TYPE = [# sender : Id, value : Ether, data : Data  #]
 
 % Not yet with exceptions on the stack s
