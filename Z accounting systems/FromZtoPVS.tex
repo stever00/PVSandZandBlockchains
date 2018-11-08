@@ -133,13 +133,15 @@ However, note that whereas $SingleState$ is a PVS type, $InitSIngleStateSchema$ 
 InitSingleState : TYPE = \{ s : SingleState | TRUE \}
 \]
 
-This is somewhat confusing as PVS uses the same notation for a ``real" set like $InitSingleStateSchema$ which contains bindings, and a type like $InitSingleState$ which is the type of such bindings. A better way to write this, then is
-\[
-InitSingleState : TYPE = SingleState
-\]
+This is somewhat confusing as PVS uses the same notation for a ``real" set like $InitSingleStateSchema$ which contains bindings, and a type like $InitSingleState$ which is the type of such bindings. 
 
-This looks like needless redundancy, of course; but we will see that it makes life easier as we generalise to model inclusions.
-
+%A better way to write this, then is
+%\[
+%InitSingleState : TYPE = SingleState
+%\]
+%
+%This looks like needless redundancy, of course; but we will see that it makes life easier as we generalise to model inclusions.
+%
 
 This idea is really all we need. 
 
@@ -224,12 +226,12 @@ DSBType : TYPE = DeltaSingleState\ WITH\ [\# date? : DATE, \\
 \]
 \[
 DoSomeBusinessSchema : setof[DSBType] = \\
-\t8 \{dsb : DSB\_Type |  EXISTS (d : DATE, desc : TEXT, a : MONEY) :\\
-\t10 d = dsb`date?\ AND\ desc = dsb`description?\ AND\\
-\t10 a = dsb`amount?\ AND\\
-\t10 dsb`ssaccount\_ = o(dsb`ssaccount,  singfs((\# date := d,\\
-	\t10					             description := desc,\\
-	\t10						     amount := a \#)))\}
+\t5 \{dsb : DSB\_Type |  EXISTS (d : DATE, desc : TEXT, a : MONEY) :\\
+\t6 d = dsb`date?\ AND\ desc = dsb`description?\ AND\\
+\t6 a = dsb`amount?\ AND\\
+\t6 dsb`ssaccount\_ = o(dsb`ssaccount,  singfs((\# date := d,\\
+	\t6					             description := desc,\\
+	\t6						     amount := a \#)))\}
          
 \]
 
@@ -263,6 +265,51 @@ DoSomeBusinessSchema : setof[DSBType] = \\
 %
 
 \section{Preconditions}
+
+We can model this by first removing components from the type used in the declaration part of the set that represents a schema (mirroring the removal of declarations from the declaration part of a schema), and then (again mirroring what happens to a schema) existentially quantifying the predicate part of the set so as to bind (and hide by abstraction) the just-removed components (observations). This is actually just what we did in the previous example, of course, since that was about hiding too. 
+
+An example: given
+
+\begin{schema}{DoSomeBusiness}
+\Delta SingleState\\
+date? : DATE\\
+description? : TEXT\\
+amount? : MONEY
+\where
+\exists d : DATE; desc : DESCRIPTION; a : MONEY @\\
+\t1 d = date? \land desc = description? \land a = amount? \land \\
+\t1 saccount' = saccount \cat \lbind date \mapsto d, description \mapsto desc, amount \mapsto a \rbind
+\end{schema}
+
+we want its precondition. This means hiding all the primed observations in its declaration part (which means hiding $SingleState'$). Recall that the pVS set modelling this schema is:
+\[
+DoSomeBusinessSchema : setof[DSBType] = \\
+\t5 \{dsb : DSB\_Type |  EXISTS (d : DATE, desc : TEXT, a : MONEY) :\\
+\t6 d = dsb`date?\ AND\ desc = dsb`description?\ AND\\
+\t6 a = dsb`amount?\ AND\\
+\t6 dsb`ssaccount\_ = o(dsb`ssaccount,  singfs((\# date := d,\\
+	\t6					             description := desc,\\
+	\t6					     amount := a \#)))\}
+         
+\]
+
+so we first need to remove the $SingleState'$ observations from $DSBType$, which gives:
+\[
+preDSBType : TYPE = SingleState
+\]
+
+and the use this in the declaration part of the new modelling set, together with existentially quantifying (renamed, for clarity) the observations (components) just removed:
+\[
+preDoSomeBusinessSchema : setof[preDSBType] = \\
+\t4\{pdsb : preDSBType |  EXISTS (s : finiteseq[Transaction]): \\
+\t5EXISTS (d : DATE, desc : TEXT, a : MONEY) :\\
+\t6 d = pdsb`date?\ AND\ desc = pdsb`description?\ AND\\
+\t6 a = pdsb`amount?\ AND\\
+\t6 s = o(pdsb`ssaccount,  singfs((\# date := d,\\
+\t7					             description := desc,\\
+	\t7					     amount := a \#)))\}
+         
+\]
 
 \section{Now for some proofs...}
 

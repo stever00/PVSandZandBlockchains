@@ -104,9 +104,9 @@ DoSomeBusiness : setof[DSBType] = {dsb : DSBType |
 							      account := acc,
 						              income := i,
 							      expenditure := e #)))}
-pDSBType : TYPE = SingleState WITH Inputs							      
+preDSBType : TYPE = SingleState WITH Inputs							      
 
-preDoSomeBusiness : setof[pDSBType] = {dsb : pDSBType | ((dsb`income? = blank AND dsb`expenditure? /= blank) XOR
+preDoSomeBusiness : setof[preDSBType] = {dsb : preDSBType | ((dsb`income? = blank AND dsb`expenditure? /= blank) XOR
 	                                                   (dsb`income? /= blank AND dsb`expenditure? = blank)) AND
 	                                                FORALL (i : below[dsb`saccount`length]) :
 			                                      ((dsb`saccount(i)`income = blank AND
@@ -253,6 +253,11 @@ R : setof[RType] =
 % AOp? and includes the equalities that make sure we are being conformal in inputs
 % as required by the Boiten and Derrick results
 % We can use the input types we have so far, and add the required equalities
+
+%**** Note: this conformality is rather strong since it makes sure that the two accounts
+% in double-entry terms are the same. This is what makes the refinement work in both directions.
+% If that were not so (accounts could be different) then refinement from double to single would
+% no longer be possible (not yet proved, though...)
 
 ConfInputsType : TYPE = Inputs WITH DInputs
 

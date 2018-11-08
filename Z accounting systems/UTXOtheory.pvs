@@ -1,5 +1,5 @@
 % This PVS is derived (according to "methods" in the example given in
-% "FromZtoPVS" and "PVSaccounting.pvs"
+% "FromZtoPVS" and "PVSaccounting.pvs")
 
 UTXOaccounting : THEORY
 
@@ -24,13 +24,15 @@ TransOutput : TYPE =  [# name : TRANSACTIONNAME, cash : CASH, owner : ACCOUNTNO 
 %\forall o : outputs @ o.name = name
 %\end{schema}
 
-Transaction_Type : TYPE = [# name : TRANSACTIONNAME,
+TransactionType : TYPE = [# name : TRANSACTIONNAME,
                              inputs : setof[TransInput],
 			     outputs : setof[TransOutput] #]
 
-Transaction : TYPE = {t : Transaction_Type | FORALL (o : (t`outputs)) : o`name = t`name }
+Transaction : setof[TransactionType] = {t : TransactionType | FORALL (o : (t`outputs)) : o`name = t`name }
 
-BCstateType : TYPE = finseq[Transaction]
+BCStateType : TYPE = finseq[TransactionType]
+
+BCState : setof[BCStateType] = { b : BCStateType | TRUE}
 
 %ItoO(h, <>)  =_{def} \emptyset\\
 %ItoO(h, < h' > \cat t  ) =_{def} ItoO(h, t) \cup\\
@@ -42,12 +44,11 @@ BCstateType : TYPE = finseq[Transaction]
 %unspentOutputs\ [h] =_{def} h.outputs\\
 %unspentOutputs\ (h : t) =_{def} unspentOutputs(t) \setminus ItoO(h,t)\  \cup\ h.outputs
 
-unspentOutputs (bc : BCstateType) : RECURSIVE setof[TransOutput] =
+unspentOutputs (bc : BCStateType) : RECURSIVE setof[TransOutput] =
    IF bc = empty_seq
    THEN emptyset
-   ELSE union(difference(unspentOutputs(^(bc, (2,bc`length))),ItoO(^(bc,(1,1)),
-                                                            ^(bc, (2,bc`length)))),
-                         ^(bc,(1,1))`outputs)
+   ELSE union(difference(unspentOutputs(^(bc, (2,bc`length))) ,ItoO(^(bc,(1,1)), ^(bc, (2,bc`length)))),
+              ^(bc,(1,1))`outputs)
    ENDIF
    MEASURE bc`length
 

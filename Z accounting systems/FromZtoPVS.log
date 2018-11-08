@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.1.18)  6 NOV 2018 16:24
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015) (preloaded format=pdflatex 2016.1.18)  7 NOV 2018 13:24
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -581,21 +581,26 @@ Overfull \hbox (3.39651pt too wide) in alignment at lines 127--129
  []
 
 [3]
-Overfull \hbox (7.83408pt too wide) in alignment at lines 166--170
+Overfull \hbox (7.83408pt too wide) in alignment at lines 168--172
 [] 
  []
 
 
-Overfull \hbox (260.70616pt too wide) in alignment at lines 190--197
+Overfull \hbox (260.70616pt too wide) in alignment at lines 192--199
 [] 
  []
 
 [4]
-Overfull \hbox (83.90381pt too wide) in alignment at lines 225--234
+Overfull \hbox (18.20364pt too wide) in alignment at lines 227--236
 [] 
  []
 
-[5] (./FromZtoPVS.aux) ) 
+[5]
+Overfull \hbox (18.20364pt too wide) in alignment at lines 285--294
+[] 
+ []
+
+[6] (./FromZtoPVS.aux) ) 
 Here is how much of TeX's memory you used:
  3986 strings out of 493089
  50558 string characters out of 6134842
@@ -616,10 +621,10 @@ nts/cm/cmr8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts
 cmsy8.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 ti10.pfb></usr/local/texlive/2015/texmf-dist/fonts/type1/public/amsfonts/symbol
 s/msam10.pfb>
-Output written on FromZtoPVS.pdf (5 pages, 137850 bytes).
+Output written on FromZtoPVS.pdf (6 pages, 140532 bytes).
 PDF statistics:
- 64 PDF objects out of 1000 (max. 8388607)
- 45 compressed objects within 1 object stream
+ 67 PDF objects out of 1000 (max. 8388607)
+ 47 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
