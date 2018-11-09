@@ -105,7 +105,7 @@ amount : MONEY
 \end{schema}
 is given in PVS as
 \[
-Transaction : TYPE = [\#\ date : DATE, description : TEXT, amount : MONEY\ \#]
+TransactionType : TYPE = [\#\ date : DATE, description : TEXT, amount : MONEY\ \#]
 \]
 and the same idea works for the next schema type:
 \begin{schema}{SingleState}
@@ -113,27 +113,28 @@ ssaccount : \seq Transaction
 \end{schema}
 which in PVS is
 \[
-SingleState : TYPE = [\#\ ssaccount :  finseq[Transaction]\ \#]
+SingleStateType : TYPE = [\#\ ssaccount :  finseq[TransactionType]\ \#]
 \]
 
 When we move to more general schemas, i.e. not just schema types, then we are, in PVS terms, dealing with dependency---a value is in the type if some conditions \emph{on the value} are met, so whether the value is in the type or not depends on whether the condition on the value is met or not. Since the values in question come from a schema type (ultimately) then they are bindings (in Z) or records (in PVS), which we saw at the level of types in $Transaction$ and $SingleState$ above. In Z terms we view a schema as a set of bindings whose elements satisfy the predicate part of the schema in question. So, in PVS, we deal with a set of records whose components satisfy a predicate. We have:
 
 \begin{schema}{InitSingleState}
-SingleState
+SingleStateType
 \where
 saccount = < >
 \end{schema}
 rendered in PVS as
 \[
-InitSingleStateSchema : setof[SingleState] = \{ s : SingleState | s`ssaccount = empty\_seq\}
+InitSingleStateSchema : setof[SingleStateType] =\\
+\t8 \{ s : SingleStateType | s`ssaccount = empty\_seq\}
 \]
 
 However, note that whereas $SingleState$ is a PVS type, $InitSIngleStateSchema$ is a PVS set, and PVS insists that these are different things (unlike Z, which insists they are the same things). Later, we might want the use the duality that Z affords us, and to handle this we have to introduce a new value
 \[
-InitSingleState : TYPE = \{ s : SingleState | TRUE \}
+InitSingleStateType : TYPE = \{ s : SingleStateType | TRUE \}
 \]
 
-This is somewhat confusing as PVS uses the same notation for a ``real" set like $InitSingleStateSchema$ which contains bindings, and a type like $InitSingleState$ which is the type of such bindings. 
+This is somewhat confusing as PVS uses the same notation for a ``real" set like $InitSingleStateSchema$ which contains bindings, and a type like $InitSingleStateType$ which is the type of such bindings. Of course, this is just setting up a synonym for $SingleStateType$ in this trivial case.
 
 %A better way to write this, then is
 %\[
@@ -142,8 +143,6 @@ This is somewhat confusing as PVS uses the same notation for a ``real" set like 
 %
 %This looks like needless redundancy, of course; but we will see that it makes life easier as we generalise to model inclusions.
 %
-
-This idea is really all we need. 
 
 We continue, recalling that so-called ``operation schemas" in Z are just schemas which follow the convention that (in general) their bindings (and hence their types) consist of observations from a ``pre-state", observations from a ``post-state" which are primed, and observations of any inputs to and outputs from the operation, indicated by having the observation names end in ``?" or ``!" respectively. Here we follow that convention as far as PVS allows. In the first example here there are no pre-state observations, and sadly PVS does not allow ``primes" in identifiers (there seems to have been a worldwide demand for this, and I'm told things are changing in version 7) so we use underscore instead (and question marks ARE allowed, but later we will see that exclamation marks are not), or inclusions as such (hence the use of WITH to keep at least some helpful structuring) and even with the WITH we have to introduce a new type identifier since PVS does not allow type expressions where a type identifier is allowed, which is odd (again I'm told this is not so, but an error in the current compiler rules this out....) :
 \begin{schema}{NewTransaction}
@@ -158,17 +157,17 @@ amount' = amount?
 \end{schema}
 in PVS is
 \[
-Transaction\_ : TYPE = [\# date\_ : DATE, description\_ : TEXT, amount\_ : MONEY \#]
+TransactionType\_ : TYPE = [\# date\_ : DATE, description\_ : TEXT, amount\_ : MONEY \#]
 \]
 \[
-NTType : TYPE = Transaction\_\ WITH\ [\# date? : DATE, \\
-\t10 \ \ \  description? : TEXT, \\
-\t10\ \  \ amount? : MONEY \#]
+NTType : TYPE = TransactionType\_\ WITH\ [\# date? : DATE, \\
+\t10 description? : TEXT, \\
+\t10 amount? : MONEY \#]
 \]
 \[
 NewTransactionSchema : setof[NTType] = \{nt : NTType | nt`date\_ = nt`date?\ AND\\
- \t10       \ \ \   \     \                                 nt`description\_ = nt`description?\ AND\\
-\t10		\ \ \ 	\	\	      nt`amount\_ = nt`amount? \}
+\t12nt`description\_ = nt`description?\ AND\\
+\t12 nt`amount\_ = nt`amount? \}
 \]
 
 Now consider
@@ -181,13 +180,13 @@ saccount' = saccount \cat < \theta Transaction' >
 
 The $\Delta$-inclusion stands for two inclusions of $SingleState$ and $SingleState'$ so we have to define this. We have the following:
 \[
-SingleState\_ : TYPE = [\#\ ssaccount\_ :  finseq[Transaction]\ \#]
+SingleStateType\_ : TYPE = [\#\ ssaccount\_ :  finseq[TransactionType]\ \#]
 \]
 \[
-DeltaSingleState : TYPE = SingleState\ WITH\ SingleState\_
+DeltaSingleStateType : TYPE = SingleStateType\ WITH\ SingleStateType\_
 \]
 \[
-PhiDSBType : TYPE = DeltaSingleState\ WITH\ Transaction\_
+PhiDSBType : TYPE = DeltaSingleStateType\ WITH\ TransactionType\_
 \]
 \[    
 PhiDoSomeBusinessSchema : setof[PhiDSBType] =\\
@@ -201,6 +200,7 @@ PhiDoSomeBusinessSchema : setof[PhiDSBType] =\\
 
 Now, hiding of types in PVS.....!!!!!
 It's already apparent that there's no counterpart to the schema calculus in PVS (which is OK since there are no schemas :) ) so hiding (existential quantification over schemas) needs to be modelled inside the set brackets in the predicate part... There is a certain amount of regularity to this, given the above, though...but first we need to unfold the existentially quantified schema expression...so the work we did above concerning $PhiDSB$ and so on was, in the end, wasted since we cannot in PVS use it...
+
 \[
 DoSomeBusiness \defs \exists Transaction' @ \Phi DoSomeBusiness \land New Transaction
 \]
@@ -233,6 +233,20 @@ DoSomeBusinessSchema : setof[DSBType] = \\
 	\t6					             description := desc,\\
 	\t6						     amount := a \#)))\}
          
+\]
+
+
+BUT, on second thoughts, if we equalise the types of the schemas we are including in a new schema ($PhiDoSomeBusiness$ and $NewTransaction$ in this case) then we can use set union to get the new schema over the enlarged (and now common to the two component schemas) type. So an alternative to the above goes as follows.
+
+$PhiDoSomeBusinessSchema$ has its type expanded to the type of $DoSomeBusinessSchema$ by defining it as:
+
+\[    
+PhiDoSomeBusinessSchema : setof[DSBType] =\\
+\t4  \{phidsb : DSBType | phidsb`ssaccount\_ =\\
+  \t10 o(phidsb`ssaccount,
+   \t10                                                singfs((\# date := phidsb`date\_,\\
+	\t10					             description := phidsb`description\_,\\
+	\t10						     amount := phidsb`amount\_ \#)))\}
 \]
 
 %Of course, when we are doing Z we'd immediately simplify the schema $DoSomeBusiness_0$ using the one-point rule inside the predicate to give a simpler schema:
