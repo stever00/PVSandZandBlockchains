@@ -1,7 +1,7 @@
 # PVS, Z and Blockchains
 Modelling blockchains in PVS and Z---from the absurdly abstract to the more-or-less real
 
-(Notes below from a talk I gave at Data61 in Setpember 2018)
+(Notes below from a talk I gave at Data61 in September 2018)
 
 
 Introduction
